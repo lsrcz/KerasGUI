@@ -88,7 +88,7 @@ public abstract class ConfigurableObject {
         return ret;
     }
 
-    public Set<Pair<Object, Field>> walkLinked(String name) {
+    private Set<Pair<Object, Field>> walkLinked(String name) {
         Set<Object> walked = new HashSet<>();
         return doWalkLinked(name, walked);
     }
