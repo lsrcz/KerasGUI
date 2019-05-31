@@ -6,29 +6,108 @@ import layers.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class ConfigurableObject {
+    ConfigurableObject link;
 
     public ConfigurableObject() {
-        for (Field f : this.getClass().getDeclaredFields()) {
+        for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (f.isAnnotationPresent(ConfigProperty.class)) {
                 f.setAccessible(true);
                 if (ConfigurableObject.class.isAssignableFrom(f.getType())) {
-                    if (f.isAnnotationPresent(DefaultStringProperty.class))
-                        continue;
-                    try {
-                        f.set(this, f.getType().newInstance());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        System.exit(-1);
+                    if (f.isAnnotationPresent(DefaultStringProperty.class)) {
+                        DefaultStringProperty annotation = f.getAnnotation(DefaultStringProperty.class);
+                        try {
+                            setString(f.getName(), annotation.defaultString());
+                            if (f.get(this) != null)
+                                ((ConfigurableObject) f.get(this)).link = this;
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            System.exit(-1);
+                        }
+                    } else {
+                        try {
+                            ConfigurableObject obj = (ConfigurableObject) f.getType().newInstance();
+                            obj.link = this;
+                            f.set(this, obj);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            System.exit(-1);
+                        }
                     }
                 }
             }
         }
+    }
 
-        for (Field f : this.getClass().getDeclaredFields()) {
+    protected static ArrayList<Field> getDeclaredFieldsUntilConfigurableObject(Class<?> cls) {
+        ArrayList<Field> ret = new ArrayList<>();
+        if (ConfigurableObject.class.isAssignableFrom(cls)) {
+            while (true) {
+                Collections.addAll(ret, cls.getDeclaredFields());
+                if (cls == ConfigurableObject.class)
+                    break;
+                cls = cls.getSuperclass();
+            }
+            return ret;
+        } else {
+            throw new Error("BUG!!!");
+        }
+    }
+
+    protected static Field getDeclaredFieldUntilConfigurableObject(Class<?> cls, String name) throws NoSuchFieldException {
+        if (ConfigurableObject.class.isAssignableFrom(cls)) {
+            while (true) {
+                try {
+                    return cls.getDeclaredField(name);
+                } catch (Exception ex) {
+                    if (cls == ConfigurableObject.class)
+                        break;
+                    cls = cls.getSuperclass();
+                }
+            }
+            throw new NoSuchFieldException();
+        } else {
+            throw new Error("BUG!!!");
+        }
+    }
+
+    protected static Method getDeclaredMethodUntilConfigurableObject(Class<?> cls, String name) throws NoSuchMethodException {
+        if (ConfigurableObject.class.isAssignableFrom(cls)) {
+            while (true) {
+                try {
+                    return cls.getDeclaredMethod(name);
+                } catch (Exception ex) {
+                    if (cls == ConfigurableObject.class)
+                        break;
+                    cls = cls.getSuperclass();
+                }
+            }
+            throw new NoSuchMethodException();
+        } else {
+            throw new Error("BUG!!!");
+        }
+    }
+
+    public void init() {
+        for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
+            if (f.isAnnotationPresent(ConfigProperty.class)) {
+                f.setAccessible(true);
+                if (ConfigurableObject.class.isAssignableFrom(f.getType())) {
+                    try {
+                        ConfigurableObject obj = (ConfigurableObject) f.get(this);
+                        if (obj != null)
+                            obj.init();
+                    } catch (Exception ex) {
+                        throw new Error("BUG!!!");
+                    }
+                }
+            }
+        }
+        for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (f.isAnnotationPresent(ConfigProperty.class)) {
                 if (f.isAnnotationPresent(UniqueProperty.class)) {
                     UniqueProperty annotation = f.getAnnotation(UniqueProperty.class);
@@ -39,7 +118,7 @@ public abstract class ConfigurableObject {
                         System.exit(-1);
                     }
                 }
-                if (f.isAnnotationPresent(DefaultStringProperty.class)) {
+                if (f.isAnnotationPresent(DefaultStringProperty.class) && !ConfigurableObject.class.isAssignableFrom(f.getType())) {
                     DefaultStringProperty annotation = f.getAnnotation(DefaultStringProperty.class);
                     try {
                         setString(f.getName(), annotation.defaultString());
@@ -54,7 +133,7 @@ public abstract class ConfigurableObject {
 
     public ArrayList<String> getConfigureList() {
         ArrayList<String> ret = new ArrayList<>();
-        for (Field f : this.getClass().getDeclaredFields()) {
+        for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (f.isAnnotationPresent(ConfigProperty.class)) {
                 ret.add(f.getName());
             }
@@ -65,7 +144,8 @@ public abstract class ConfigurableObject {
     private Set<Pair<Object, Field>> doWalkLinked(String name, Set<Object> walked) {
         walked.add(this);
         Set<Pair<Object, Field>> ret = new HashSet<>();
-        for (Field f : this.getClass().getDeclaredFields()) {
+        ArrayList<Field> fields = getDeclaredFieldsUntilConfigurableObject(this.getClass());
+        for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (f.isAnnotationPresent(LinkedProperty.class)) {
                 LinkedProperty annotation = f.getAnnotation(LinkedProperty.class);
                 if (annotation.name().equals(name)) {
@@ -92,7 +172,7 @@ public abstract class ConfigurableObject {
     }
 
     private Set<Pair<Object, Field>> getNeedSetSet(String name) throws NoSuchFieldException {
-        Field f = this.getClass().getDeclaredField(name);
+        Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
         if (!f.isAnnotationPresent(ConfigProperty.class))
             throw new IllegalArgumentException("Not configurable");
         Set<Pair<Object, Field>> needSet = new HashSet<>();
@@ -173,6 +253,8 @@ public abstract class ConfigurableObject {
                     if (!newObjAssigned) {
                         newObj = m.invoke(null, str);
                         newObjAssigned = true;
+                        if (newObj != null)
+                            ((ConfigurableObject) newObj).link = (ConfigurableObject) obj;
                     }
                     f.set(obj, newObj);
                 } catch (Exception ex) {
@@ -187,7 +269,7 @@ public abstract class ConfigurableObject {
 
     private Class<?> getConfigType(String name) {
         try {
-            Field f = this.getClass().getDeclaredField(name);
+            Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
             return f.getType();
         } catch (Exception ex) {
             return null;
@@ -196,12 +278,12 @@ public abstract class ConfigurableObject {
 
     public String[] getSelection(String name) {
         try {
-            Field f = this.getClass().getDeclaredField(name);
+            Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
             if (f.isAnnotationPresent(SelectStringProperty.class)) {
                 SelectStringProperty annotation = f.getAnnotation(SelectStringProperty.class);
                 return annotation.selections();
             } else {
-                Method m = f.getType().getDeclaredMethod("getSelections");
+                Method m = getDeclaredMethodUntilConfigurableObject(f.getType(), "getSelections");
                 m.setAccessible(true);
                 try {
                     return (String[]) m.invoke(null);
@@ -218,7 +300,7 @@ public abstract class ConfigurableObject {
 
     private Object getObject(String name, Class<?> cls) {
         try {
-            Field f = this.getClass().getDeclaredField(name);
+            Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
             f.setAccessible(true);
             return cls.cast(f.get(this));
         } catch (Exception ex) {

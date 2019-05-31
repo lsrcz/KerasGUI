@@ -2,18 +2,16 @@ package layers.layers;
 
 import com.google.gson.annotations.Expose;
 import layers.ConfigurableObject;
-import layers.annotation.ConfigProperty;
-import layers.annotation.DefaultStringProperty;
-import layers.annotation.LinkedProperty;
-import layers.annotation.SelectStringProperty;
+import layers.annotation.*;
 import layers.constraint.BaseConstraint;
 import layers.initializer.BaseInitializer;
 import layers.regularizer.BaseRegularizer;
 
 public class DenseConfig extends ConfigurableObject {
-    Dense father;
 
     @LinkedProperty(name = "name")
+    @UniqueProperty(scope = "name", prefix = "dense")
+    @ConfigProperty
     @Expose
     String name;
 
@@ -76,12 +74,6 @@ public class DenseConfig extends ConfigurableObject {
     @DefaultStringProperty(defaultString = "None")
     BaseConstraint bias_constraint;
 
-    @Expose
-    Object[][][] inbound_nodes;
 
-    {
-        inbound_nodes = new Object[1][][];
-        inbound_nodes[0] = new Object[0][];
-    }
 
 }
