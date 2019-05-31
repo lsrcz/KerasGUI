@@ -11,6 +11,7 @@ public class BaseConstraint extends ConfigurableObject {
 
     static {
         map = new HashMap<>();
+        map.put("None", null);
         map.put("MaxNorm", MaxNorm.class);
         map.put("NonNeg", NonNeg.class);
         map.put("MinMaxNorm", MinMaxNorm.class);
@@ -27,6 +28,8 @@ public class BaseConstraint extends ConfigurableObject {
     public static BaseConstraint select(String str) {
         if (map.containsKey(str)) {
             Class<?> cls = map.get(str);
+            if (cls == null)
+                return null;
             try {
                 return (BaseConstraint) cls.newInstance();
             } catch (Exception ex) {

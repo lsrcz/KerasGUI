@@ -11,6 +11,7 @@ public class BaseInitializer extends ConfigurableObject {
 
     static {
         map = new HashMap<>();
+        map.put("None", null);
         map.put("GlorotUniform", GlorotUniform.class);
         map.put("Zeros", Zeros.class);
         map.put("Ones", Ones.class);
@@ -26,6 +27,8 @@ public class BaseInitializer extends ConfigurableObject {
     public static BaseInitializer select(String str) {
         if (map.containsKey(str)) {
             Class<?> cls = map.get(str);
+            if (cls == null)
+                return null;
             try {
                 return (BaseInitializer) cls.newInstance();
             } catch (Exception ex) {
