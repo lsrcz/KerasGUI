@@ -226,6 +226,16 @@ public abstract class ConfigurableObject {
         }
     }
 
+    public String getString(String name) {
+        try {
+            Field f = this.getClass().getDeclaredField(name);
+            f.setAccessible(true);
+            return (String) f.get(this);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     public boolean isIntegerConfig(String name) {
         return getConfigType(name) == int.class;
     }
