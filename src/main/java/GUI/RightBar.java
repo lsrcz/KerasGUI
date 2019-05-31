@@ -3,6 +3,7 @@ package GUI;
 import layers.ConfigurableObject;
 import layers.layers.Dense;
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -39,8 +40,19 @@ public class RightBar extends JPanel {
         if(obj.isNullableIntegerConfig(str))
         {
             System.out.println(str);
+            JCheckBox checkBox = new JCheckBox();
+            checkBox.setSelected(false);
             JTextField textField = new JTextField("null");
+            checkBox.addChangeListener((e)->{
+                JCheckBox source = (JCheckBox) e.getSource();
+                if(source.isSelected())
+                    textField.setEnabled(true);
+                else
+                    textField.setEnabled(false);
+            });
             textField.setPreferredSize(new Dimension(150,30));
+            textField.setEnabled(false);
+            temp.add(checkBox);
             temp.add(textField);
         }
         if(obj.isIntegerConfig(str))
