@@ -1,15 +1,13 @@
 package layers;
 
-import com.google.gson.annotations.Expose;
 import javafx.util.Pair;
 import layers.annotation.*;
-import sun.awt.image.ImageWatched;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class ConfigurableObject {
 
@@ -138,6 +136,22 @@ public abstract class ConfigurableObject {
         }
     }
 
+    public void setDouble(String name, double num) throws NoSuchFieldException {
+        for (Pair<Object, Field> p : getNeedSetSet(name)) {
+            Object obj = p.getKey();
+            Field f = p.getValue();
+            f.setAccessible(true);
+            if (f.getType() != double.class)
+                throw new IllegalArgumentException("Not double type");
+            try {
+                f.setDouble(obj, num);
+            } catch (IllegalAccessException ex) {
+                ex.printStackTrace();
+                System.exit(-1);
+            }
+        }
+    }
+
     public void setString(String name, String str) throws NoSuchFieldException, NoSuchMethodException {
         Object newObj = null;
         boolean newObjAssigned = false;
@@ -218,6 +232,10 @@ public abstract class ConfigurableObject {
 
     public boolean isNullableIntegerConfig(String name) {
         return getConfigType(name) == Integer.class;
+    }
+
+    public boolean isDoubleConfig(String name) {
+        return getConfigType(name) == double.class;
     }
 
     public boolean isStringConfig(String name) {
