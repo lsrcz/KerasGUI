@@ -14,8 +14,8 @@ public class GUI extends JFrame {
         RightBar rightBar = new RightBar();
         Center center = new Center();
         LeftBar leftBar = new LeftBar();
-        add("East", rightBar);
-        add("West", leftBar);
+        add("East", new JScrollPane(rightBar));
+        add("West", new JScrollPane(leftBar));
         add("Center", center);
         leftBar.setPreferredSize(new Dimension(250,0));
         rightBar.setPreferredSize(new Dimension(250, 0));
