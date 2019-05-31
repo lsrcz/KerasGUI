@@ -2,8 +2,6 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class GUI extends JFrame {
     GUI()
@@ -12,9 +10,10 @@ public class GUI extends JFrame {
 
         setLayout(new BorderLayout());
         RightBar rightBar = new RightBar();
+        JScrollPane rightScrollPane = new JScrollPane(rightBar);
         Center center = new Center();
-        LeftBar leftBar = new LeftBar();
-        add("East", new JScrollPane(rightBar));
+        LeftBar leftBar = new LeftBar(rightBar);
+        add("East", rightScrollPane);
         add("West", new JScrollPane(leftBar));
         add("Center", center);
         leftBar.setPreferredSize(new Dimension(250,0));
