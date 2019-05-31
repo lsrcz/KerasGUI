@@ -14,6 +14,7 @@ public class LeftBar extends JPanel {
         dense.setPreferredSize(new Dimension(150, 30));
         dense.addActionListener((e)->{
             Dense temp = new Dense();
+            //toCenter(temp);
             rightBar.refresh(temp);
         });
         JButton test = new JButton("test");

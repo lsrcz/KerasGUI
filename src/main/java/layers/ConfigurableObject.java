@@ -120,6 +120,22 @@ public abstract class ConfigurableObject {
         }
     }
 
+    public void setBoolean(String name, boolean choice) throws NoSuchFieldException {
+        for (Pair<Object, Field> p : getNeedSetSet(name)) {
+            Object obj = p.getKey();
+            Field f = p.getValue();
+            f.setAccessible(true);
+            if (f.getType() != boolean.class)
+                throw new IllegalArgumentException("Not boolean type");
+            try {
+                f.setBoolean(obj, choice);
+            } catch (IllegalAccessException ex) {
+                ex.printStackTrace();
+                System.exit(-1);
+            }
+        }
+    }
+
     public void setNullableInt(String name, Integer num) throws NoSuchFieldException {
         for (Pair<Object, Field> p : getNeedSetSet(name)) {
             Object obj = p.getKey();
@@ -128,7 +144,7 @@ public abstract class ConfigurableObject {
             if (f.getType() != Integer.class)
                 throw new IllegalArgumentException("Not Integer type");
             try {
-                f.setInt(obj, num);
+                f.set(obj, num);
             } catch (IllegalAccessException ex) {
                 ex.printStackTrace();
                 System.exit(-1);
@@ -216,10 +232,13 @@ public abstract class ConfigurableObject {
         }
     }
 
-    private Object getObject(String name, Class<?> cls) {
+    private Object getObject(String name, Class<?> cls, boolean nonNull) {
         try {
             Field f = this.getClass().getDeclaredField(name);
             f.setAccessible(true);
+            Object got = f.get(this);
+            if (nonNull && got == null)
+                throw new Error("BUG!!!");
             return cls.cast(f.get(this));
         } catch (Exception ex) {
             throw new Error("BUG!!!");
@@ -227,23 +246,27 @@ public abstract class ConfigurableObject {
     }
 
     public ConfigurableObject getConfigurableObject(String name) {
-        return (ConfigurableObject) getObject(name, ConfigurableObject.class);
+        return (ConfigurableObject) getObject(name, ConfigurableObject.class, false);
     }
 
     public String getString(String name) {
-        return (String) getObject(name, String.class);
+        return (String) getObject(name, String.class, false);
     }
 
     public int getInteger(String name) {
-        return (int) getObject(name, int.class);
+        return (int) getObject(name, Integer.class, true);
     }
 
-    public int getNullableInteger(String name) {
-        return (Integer) getObject(name, Integer.class);
+    public Integer getNullableInteger(String name) {
+        return (Integer) getObject(name, Integer.class, false);
     }
 
     public double getDouble(String name) {
-        return (double) getObject(name, double.class);
+        return (double) getObject(name, Double.class, true);
+    }
+
+    public boolean getBoolean(String name) {
+        return (boolean) getObject(name, Boolean.class, true);
     }
 
     public boolean isIntegerConfig(String name) {
