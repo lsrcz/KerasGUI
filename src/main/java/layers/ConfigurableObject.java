@@ -212,28 +212,38 @@ public abstract class ConfigurableObject {
             }
             return null;
         } catch (Exception ex) {
-            return null;
+            throw new Error("BUG!!!");
+        }
+    }
+
+    private Object getObject(String name, Class<?> cls) {
+        try {
+            Field f = this.getClass().getDeclaredField(name);
+            f.setAccessible(true);
+            return cls.cast(f.get(this));
+        } catch (Exception ex) {
+            throw new Error("BUG!!!");
         }
     }
 
     public ConfigurableObject getConfigurableObject(String name) {
-        try {
-            Field f = this.getClass().getDeclaredField(name);
-            f.setAccessible(true);
-            return (ConfigurableObject) f.get(this);
-        } catch (Exception ex) {
-            return null;
-        }
+        return (ConfigurableObject) getObject(name, ConfigurableObject.class);
     }
 
     public String getString(String name) {
-        try {
-            Field f = this.getClass().getDeclaredField(name);
-            f.setAccessible(true);
-            return (String) f.get(this);
-        } catch (Exception ex) {
-            return null;
-        }
+        return (String) getObject(name, String.class);
+    }
+
+    public int getInteger(String name) {
+        return (int) getObject(name, int.class);
+    }
+
+    public int getNullableInteger(String name) {
+        return (Integer) getObject(name, Integer.class);
+    }
+
+    public double getDouble(String name) {
+        return (double) getObject(name, double.class);
     }
 
     public boolean isIntegerConfig(String name) {
