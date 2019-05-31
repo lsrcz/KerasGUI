@@ -13,6 +13,7 @@ public class LeftBar extends JPanel {
         dense.setPreferredSize(new Dimension(150, 30));
         dense.addActionListener((e) -> {
             Dense temp = new Dense();
+            temp.init();
             //toCenter(temp);
             rightBar.refresh(temp);
         });

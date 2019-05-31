@@ -269,8 +269,10 @@ public abstract class ConfigurableObject {
                     if (!newObjAssigned) {
                         newObj = m.invoke(null, str);
                         newObjAssigned = true;
-                        if (newObj != null)
+                        if (newObj != null) {
                             ((ConfigurableObject) newObj).link = (ConfigurableObject) obj;
+                            ((ConfigurableObject) newObj).init();
+                        }
                     }
                     f.set(obj, newObj);
                 } catch (Exception ex) {
