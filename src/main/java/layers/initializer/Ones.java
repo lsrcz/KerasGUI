@@ -3,11 +3,11 @@ package layers.initializer;
 import com.google.gson.annotations.Expose;
 import layers.annotation.ConfigProperty;
 
-public class GlorotUniform extends BaseInitializer {
+public class Ones extends BaseInitializer {
     @Expose
-    public final String class_name = "GlorotUniform";
+    public final String class_name = "Ones";
 
     @ConfigProperty
     @Expose
-    GlorotUniformConfig config;
+    OnesConfig config;
 }

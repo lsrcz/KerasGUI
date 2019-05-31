@@ -1,12 +1,13 @@
 package layers.initializer;
 
+import com.google.gson.annotations.Expose;
 import layers.annotation.ConfigProperty;
-import layers.annotation.DefaultStringProperty;
-import layers.annotation.SelectStringProperty;
 
 public class Zeros extends BaseInitializer {
+    @Expose
     public final String class_name = "Zeros";
 
     @ConfigProperty
+    @Expose
     ZerosConfig config;
 }
