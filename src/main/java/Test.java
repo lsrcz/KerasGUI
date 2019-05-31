@@ -3,6 +3,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Until;
 import layers.layers.Dense;
 import layers.layers.DenseConfig;
+import layers.model.Model;
 
 import java.util.HashMap;
 
@@ -71,6 +72,29 @@ public class Test {
         for (String str : denseConfig.getSelection("kernel_initializer")) {
             System.out.println(str);
         }
+
+        System.out.println("--------");
+
+        Dense d1 = new Dense();
+        d1.init();
+        Model model = new Model();
+        model.config.addLayer(d1);
+        System.out.println(gson.toJson(model));
+        model.config.deleteLayer(d1);
+        System.out.println(gson.toJson(model));
+        Dense d2 = new Dense();
+        d2.init();
+        model.config.addLayer(d1);
+        model.config.addLayer(d2);
+        System.out.println("--------");
+        System.out.println(gson.toJson(model));
+        System.out.println("--------");
+        model.config.addEdge(d1, d2);
+        System.out.println(gson.toJson(model));
+        System.out.println("--------");
+        model.config.deleteEdge(d1, d2);
+        System.out.println(gson.toJson(model));
+
 
     }
 }
