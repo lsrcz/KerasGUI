@@ -1,6 +1,7 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Until;
+import layers.ConfigurableObject;
 import layers.layers.Dense;
 import layers.layers.DenseConfig;
 
@@ -54,8 +55,9 @@ public class Test {
         System.out.println(gson.toJson(d));
 
 
-        System.out.println(d.isStringConfig("name"));
-        String[] lst = d.getConfigurableObject("config").getSelection("dtype");
+        System.out.println(d.isStringConfig("kernel_initializer"));
+        String[] lst = d.getConfigurableObject("config").getSelection("units");
+        System.out.println(lst);
         try {
             d.getConfigurableObject("config").setString("name", "abc");
         } catch (Exception ex) {
@@ -71,6 +73,18 @@ public class Test {
         for (String str : denseConfig.getSelection("kernel_initializer")) {
             System.out.println(str);
         }
-
+        getConfig(denseConfig, 0);
+    }
+    static void getConfig(ConfigurableObject denseConfig, int depth)
+    {
+        ConfigurableObject config;
+        for (String str : denseConfig.getConfigureList()) {
+            for(int i = 0; i < depth; i++)
+                System.out.print(" ");
+            System.out.println(str);
+            config = denseConfig.getConfigurableObject(str);
+            if(config != null)
+                getConfig(config, depth + 1);
+        }
     }
 }
