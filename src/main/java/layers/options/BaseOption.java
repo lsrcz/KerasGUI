@@ -12,6 +12,7 @@ public class BaseOption extends ConfigurableObject {
 
     static {
         map = new HashMap<>();
+        map.put("None", null);
     }
 
     public static String[] getSelections() {
@@ -23,6 +24,8 @@ public class BaseOption extends ConfigurableObject {
     public static BaseOption select(String str) {
         if (map.containsKey(str)) {
             Class<?> cls = map.get(str);
+            if (cls == null)
+                return null;
             try {
                 return (BaseOption) cls.newInstance();
             } catch (Exception ex) {
