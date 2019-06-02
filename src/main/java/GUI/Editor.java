@@ -9,9 +9,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 
@@ -23,6 +21,7 @@ public class Editor extends JFrame {
     public JMenuItem saveItem;
     public JMenuItem runItem;
 
+    public String currentFileName;
     public final static String[] keyWord = new String[]{"False", "None", "True", "and", "as", "assert", "break", "class", "continue",
             "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is",
             "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"};
@@ -105,18 +104,18 @@ public class Editor extends JFrame {
                 }
                 // 检查格式
                 checkStyle();
-                System.out.println("insert");
+//                System.out.println("insert");
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 checkStyle();
-                System.out.println("remove");
+//                System.out.println("remove");
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                System.out.println("changed");
+//                System.out.println("changed");
             }
         });
 
@@ -125,19 +124,28 @@ public class Editor extends JFrame {
         menu.add(saveItem);
         menu.add(runItem);
         saveItem.addActionListener(e -> {
+            currentFileName = JOptionPane.showInputDialog("请输入文件名： ");
             try {
-                File file = new File("test.py");
+                File file = new File(currentFileName + ".py");
                 FileWriter fileWriter = new FileWriter(file.getName());
                 fileWriter.write(textPane.getText());
                 fileWriter.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            setTitle("python编辑器    " + currentFileName + ".py");
         });
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         runItem.addActionListener(e -> {
-            // lalala
+            try {
+                CallPython(currentFileName + ".py");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
         });
+        runItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, ActionEvent.CTRL_MASK));
 
         setSize(1280, 960);
         setTitle("python编辑器");
@@ -288,6 +296,40 @@ public class Editor extends JFrame {
         return count;
     }
 
+    public static void CallPython(String path) throws IOException, InterruptedException {
+
+        // define the command string
+//        path = "\"" + path + "\"";
+        String os = System.getProperty("os.name");
+        System.out.println(os);
+        String[] commandStr;
+        if (os.indexOf("Windows") != -1) {
+            commandStr = new String[]{"python", path};
+        } else {
+            commandStr = new String[]{"python3", path};
+        }
+        //Create a Process instance and execute commands
+        Process pr = Runtime.getRuntime().exec(commandStr);
+        //Get the result produced by executing the above commands
+        BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+        String line = null;
+        String result = "";
+        BufferedWriter out = new BufferedWriter(new FileWriter("wdnmd.txt"));
+        while ((line = in.readLine()) != null) {
+            if (os.indexOf("Windows") != -1) result += line + "\r\n";
+            else if (os.indexOf("Linux") != -1) result += line + "\n";
+            else result += line + "\r";
+        }
+        System.out.println(result);
+        out.write(result);
+        in.close();
+        out.close();
+        int endFlag = pr.waitFor();
+        if (endFlag == 0) {
+            System.out.println("The process ends normally.");
+        }
+    }
+
     private boolean isCharacter(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
@@ -303,8 +345,7 @@ public class Editor extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             WebLookAndFeel.install();
-            Editor editor = new Editor();
-            editor.init();
+            new Editor().init();
         });
 
 //        try {
