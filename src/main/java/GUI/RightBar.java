@@ -18,14 +18,13 @@ public class RightBar extends JPanel {
 
     RightBar() {
         setLayout(new FlowLayout(FlowLayout.LEFT));
-        //setSize(400, 720);
+        //setSize(250, 720);
         setFocusable(true);
     }
 
     void refresh(ConfigurableObject object) {
         this.removeAll();
         this.object = object;
-        ArrayList<String> configureList = object.getConfigurableObject("config").getConfigureList();
         JPanel temp = new JPanel();
         temp.setLayout(new FlowLayout());
         temp.add(new JLabel("Name:"));
@@ -56,7 +55,8 @@ public class RightBar extends JPanel {
         });
         temp.add(textField);
         add(temp);
-        getConfig(object.getConfigurableObject("config"), 0);
+        int count = getConfig(object.getConfigurableObject("config"), 0) + 1;
+        setPreferredSize(new Dimension(250, count * 42));
         updateUI();
     }
 
@@ -365,17 +365,21 @@ public class RightBar extends JPanel {
         return temp;
     }
 
-    void getConfig(ConfigurableObject config, int depth) {
+    int getConfig(ConfigurableObject config, int depth) {
         ConfigurableObject tempConfig = null;
+        int count = 0;
         for (String str : config.getConfigureList()) {
-            if (!str.equals("config"))
+            if (!str.equals("config")) {
                 add(getPanel(config, str, depth));
+                count += 1;
+            }
             if (config.isConfigurableObjectConfig(str)) {
                 tempConfig = config.getConfigurableObject(str);
                 if (tempConfig != null)
-                    getConfig(tempConfig, depth + 1);
+                    count += getConfig(tempConfig, depth + 1);
             }
         }
+        return count;
     }
 
 }

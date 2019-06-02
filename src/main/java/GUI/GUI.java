@@ -17,7 +17,7 @@ public class GUI extends JFrame {
         add("West", new JScrollPane(leftBar));
         add("Center", center);
         leftBar.setPreferredSize(new Dimension(250,0));
-        rightBar.setPreferredSize(new Dimension(250, 0));
+        rightScrollPane.setPreferredSize(new Dimension(250, 0));
         setSize(1280, 720);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setFocusable(true);
