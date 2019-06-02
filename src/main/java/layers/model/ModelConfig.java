@@ -5,7 +5,9 @@ import javafx.util.Pair;
 import layers.UniqueNameGenerator;
 import layers.layers.Layer;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ModelConfig {
@@ -17,7 +19,7 @@ public class ModelConfig {
     private Object[][] input_layers;
     @Expose
     private Object[][] output_layers;
-    private Set<Pair<Layer, Layer>> edges = new HashSet<>();
+    private Map<Layer, Set<Layer>> edges = new HashMap<>();
 
     {
         layers = new Layer[0];
@@ -57,30 +59,73 @@ public class ModelConfig {
 
                 Set<Pair<Layer, Layer>> shouldDelete = new HashSet<>();
 
-                for (Pair<Layer, Layer> edge : edges) {
-                    if (edge.getKey() == obj || edge.getValue() == obj) {
-                        shouldDelete.add(edge);
+                edges.remove(obj);
+
+                for (Layer from : edges.keySet()) {
+                    for (Layer to : edges.get(from)) {
+                        if (to == obj) {
+                            shouldDelete.add(new Pair<>(from, to));
+                        }
                     }
                 }
 
                 for (Pair<Layer, Layer> edge : shouldDelete) {
-                    if (!edges.remove(edge)) {
-                        throw new Error("BUG!!!");
-                    }
+                    deleteEdge(edge.getKey(), edge.getValue());
                 }
+                updateEdge();
                 return;
             }
         }
         throw new Error("BUG!!!");
     }
 
-    public void addEdge(Layer from, Layer to) {
-        edges.add(new Pair<>(from, to));
+    private boolean loopFree() {
+        Map<Layer, Integer> inDegree = new HashMap<>();
+        for (Layer l : layers) {
+            inDegree.put(l, 0);
+        }
+        for (Layer from : edges.keySet()) {
+            for (Layer to : edges.get(from)) {
+                inDegree.put(to, inDegree.get(to) + 1);
+            }
+        }
+        while (true) {
+            Set<Layer> zeroSet = new HashSet<>();
+            for (Layer l : inDegree.keySet()) {
+                if (inDegree.get(l) == 0) {
+                    zeroSet.add(l);
+                }
+            }
+            if (zeroSet.isEmpty() && !inDegree.isEmpty()) {
+                return false;
+            }
+            for (Layer l : zeroSet) {
+                inDegree.remove(l);
+            }
+            if (inDegree.isEmpty()) {
+                return true;
+            }
+        }
+    }
+
+    public boolean addEdge(Layer from, Layer to) {
+        if (!edges.containsKey(from))
+            edges.put(from, new HashSet<>());
+        edges.get(from).add(to);
+        if (!loopFree()) {
+            deleteEdge(from, to);
+            return false;
+        }
         updateEdge();
+        return true;
     }
 
     public void deleteEdge(Layer from, Layer to) {
-        edges.remove(new Pair<>(from, to));
+        if (!edges.containsKey(from))
+            return;
+        edges.get(from).remove(to);
+        if (edges.get(from).isEmpty())
+            edges.remove(from);
         updateEdge();
     }
 
@@ -88,8 +133,10 @@ public class ModelConfig {
         for (Layer layer : layers) {
             layer.clearEdges();
         }
-        for (Pair<Layer, Layer> edge : edges) {
-            edge.getValue().addInEdge(edge.getKey().getName());
+        for (Layer from : edges.keySet()) {
+            for (Layer to : edges.get(from)) {
+                to.addInEdge(from.getName());
+            }
         }
     }
 
