@@ -158,6 +158,7 @@ class MyActionListener implements ActionListener
 				mb.addActionListener(new MyActionListener(center));
 				center.bottomScrollPane.add(mb);
 				center.updateUI();
+				center.canCreate = false;
 			}
 		}
 		else if(button==center.button2){
