@@ -11,8 +11,8 @@ public class GUI extends JFrame {
         setLayout(new BorderLayout());
         RightBar rightBar = new RightBar();
         JScrollPane rightScrollPane = new JScrollPane(rightBar);
-        Center center = new Center();
-        LeftBar leftBar = new LeftBar(rightBar);
+        Center center = new Center(rightBar);
+        LeftBar leftBar = new LeftBar(rightBar, center);
         add("East", rightScrollPane);
         add("West", new JScrollPane(leftBar));
         add("Center", center);
@@ -23,6 +23,7 @@ public class GUI extends JFrame {
         setFocusable(true);
         setVisible(true);
     }
+    
 
     public static void main(String[] args)
     {
