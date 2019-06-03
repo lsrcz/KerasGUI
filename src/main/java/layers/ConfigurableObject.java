@@ -2,14 +2,14 @@ package layers;
 
 import layers.annotation.*;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class ConfigurableObject {
+public abstract class ConfigurableObject implements Serializable {
     ConfigurableObject link;
 
     public ConfigurableObject() {
@@ -42,53 +42,16 @@ public abstract class ConfigurableObject {
         }
     }
 
-    protected static ArrayList<Field> getDeclaredFieldsUntilConfigurableObject(Class<?> cls) {
-        ArrayList<Field> ret = new ArrayList<>();
-        if (ConfigurableObject.class.isAssignableFrom(cls)) {
-            while (true) {
-                Collections.addAll(ret, cls.getDeclaredFields());
-                if (cls == ConfigurableObject.class)
-                    break;
-                cls = cls.getSuperclass();
-            }
-            return ret;
-        } else {
-            throw new Error("BUG!!!");
-        }
+    protected ArrayList<Field> getDeclaredFieldsUntilConfigurableObject(Class<?> cls) {
+        return ClassUtils.getDeclaredFieldsUntilClass(cls, ConfigurableObject.class, true);
     }
 
-    protected static Field getDeclaredFieldUntilConfigurableObject(Class<?> cls, String name) throws NoSuchFieldException {
-        if (ConfigurableObject.class.isAssignableFrom(cls)) {
-            while (true) {
-                try {
-                    return cls.getDeclaredField(name);
-                } catch (Exception ex) {
-                    if (cls == ConfigurableObject.class)
-                        break;
-                    cls = cls.getSuperclass();
-                }
-            }
-            throw new NoSuchFieldException();
-        } else {
-            throw new Error("BUG!!!");
-        }
+    protected Field getDeclaredFieldUntilConfigurableObject(Class<?> cls, String name) throws NoSuchFieldException {
+        return ClassUtils.getDeclaredFieldUntilClass(cls, ConfigurableObject.class, name, true);
     }
 
-    protected static Method getDeclaredMethodUntilConfigurableObject(Class<?> cls, String name) throws NoSuchMethodException {
-        if (ConfigurableObject.class.isAssignableFrom(cls)) {
-            while (true) {
-                try {
-                    return cls.getDeclaredMethod(name);
-                } catch (Exception ex) {
-                    if (cls == ConfigurableObject.class)
-                        break;
-                    cls = cls.getSuperclass();
-                }
-            }
-            throw new NoSuchMethodException();
-        } else {
-            throw new Error("BUG!!!");
-        }
+    protected Method getDeclaredMethodUntilConfigurableObject(Class<?> cls, String name) throws NoSuchMethodException {
+        return ClassUtils.getDeclaredMethodUntilClass(cls, ConfigurableObject.class, name, true);
     }
 
     public void init() {

@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
-public class Model {
+import java.io.Serializable;
+
+public class Model implements Serializable {
     @Expose
     public final String class_name = "Model";
     @Expose

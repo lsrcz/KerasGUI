@@ -5,14 +5,14 @@ import layers.Pair;
 import layers.UniqueNameGenerator;
 import layers.layers.Layer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 
-
-public class ModelConfig {
+public class ModelConfig implements Serializable {
     @Expose
     private String name = UniqueNameGenerator.getInstance().generate("model", "model");
     @Expose
