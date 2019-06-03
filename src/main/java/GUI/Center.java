@@ -61,8 +61,8 @@ public class Center extends JPanel {
 	public void addLine(MyButton btn1,MyButton btn2,int eventNumber) {
 			if(eventNumber==2)
 			{
-				if(KModel.config.addEdge(btn1.layer,btn2.layer)==false);
-					//return;
+				if(KModel.config.addEdge(btn1.layer,btn2.layer)==false)
+					return;
 
 
 				paintPanel.line.add(new LineParameter(btn1,btn2));
