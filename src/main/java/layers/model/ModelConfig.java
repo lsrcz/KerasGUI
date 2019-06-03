@@ -103,6 +103,15 @@ public class ModelConfig {
             }
             for (Layer l : zeroSet) {
                 inDegree.remove(l);
+                if (edges.containsKey(l)) {
+                    for (Layer l1 : edges.get(l)) {
+                        if (inDegree.containsKey(l1)) {
+                            inDegree.put(l1, inDegree.get(l1) - 1);
+                        } else {
+                            throw new Error("BUG!!!");
+                        }
+                    }
+                }
             }
             if (inDegree.isEmpty()) {
                 return true;
