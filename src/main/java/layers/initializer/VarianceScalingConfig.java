@@ -1,11 +1,12 @@
 package layers.initializer;
 
 import com.google.gson.annotations.Expose;
+import layers.ConfigurableObject;
 import layers.annotation.ConfigProperty;
 import layers.annotation.DefaultStringProperty;
 import layers.annotation.SelectStringProperty;
 
-public class VarianceScalingConfig {
+public class VarianceScalingConfig extends ConfigurableObject {
     @ConfigProperty
     @Expose
     double scale;
