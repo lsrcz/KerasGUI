@@ -18,7 +18,8 @@ public class Center extends JPanel {
 	public Layer layer;
 	public boolean canCreate;
 	public JButton button1, button2, button3;
-	public MyJScrollPane bottomScrollPane;
+	//public MyJScrollPane paintPanel;
+	public MyJPanel paintPanel;
 	public JPanel pnlBottom;
 	public Model KModel;
 	public JPanel pnlHead;
@@ -41,15 +42,18 @@ public class Center extends JPanel {
 		pnlHead.add(button1); pnlHead.add(button2); pnlHead.add(button3);
 		pnlBottom = new JPanel();
 		pnlBottom.setLayout(null);
-		bottomScrollPane = new MyJScrollPane(pnlBottom, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		bottomScrollPane.setLayout(null);
+		//paintPanel = new MyJScrollPane(pnlBottom, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+		//		ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		//paintPanel.setLayout(null);
+		paintPanel = new MyJPanel();
+		paintPanel.setLayout(null);
 		//JLabel score = new JLabel("Your score is:");
 		setBorder(BorderFactory.createEtchedBorder());
 		//add(score);
 		setLayout(new BorderLayout());
 		add("North", pnlHead);
-		add("Center", bottomScrollPane);
+		add("Center", new JScrollPane(paintPanel));
+		//add("Center", paintPanel);
 		setFocusable(true);
 		setVisible(true);
 	}
@@ -58,16 +62,16 @@ public class Center extends JPanel {
 			if(eventNumber==2)
 			{
 				KModel.config.addEdge(btn1.layer,btn2.layer);
-				bottomScrollPane.line.add(new LineParameter(btn1,btn2));
+				paintPanel.line.add(new LineParameter(btn1,btn2));
 				updateUI();
 			}
 			else if(eventNumber==3){
 				KModel.config.deleteEdge(btn1.layer,btn2.layer);
 				int index=0;
-				for(;index<bottomScrollPane.line.size();index++){
-					if(bottomScrollPane.line.get(index).btn1==btn1&&bottomScrollPane.line.get(index).btn2==btn2)
+				for(;index<paintPanel.line.size();index++){
+					if(paintPanel.line.get(index).btn1==btn1&&paintPanel.line.get(index).btn2==btn2)
 					{
-						bottomScrollPane.line.remove(index);
+						paintPanel.line.remove(index);
 						break;
 					}
 				}
@@ -82,7 +86,7 @@ public class Center extends JPanel {
 		canCreate = true;
 	}
 }
-class MyJScrollPane extends JScrollPane{
+/*class MyJScrollPane extends JScrollPane{
 	ArrayList<LineParameter> line=new ArrayList<LineParameter>();
 	public MyJScrollPane(){
 		super();
@@ -127,6 +131,51 @@ class MyJScrollPane extends JScrollPane{
 			}
 		}
 	}
+}*/
+class MyJPanel extends JPanel{
+	ArrayList<LineParameter> line=new ArrayList<LineParameter>();
+	int maxY;
+	MyButton maxButton;
+	public MyJPanel(){
+		super();
+		maxY = 0;
+	}
+	public void paint(Graphics g) {
+		super.paint(g);
+		int i=0;
+		for(;i<line.size();i++){
+			LineParameter tmpLine=line.get(i);
+			int btn1_x=tmpLine.btn1.getX()+60;
+			int btn1_y=tmpLine.btn1.getY();
+			int btn2_x=tmpLine.btn2.getX()+60;
+			int btn2_y=tmpLine.btn2.getY();
+			int mid_y;
+			boolean flag=true;
+			if(btn2_y>btn1_y+60){
+				btn1_y+=60;
+				mid_y=(btn1_y+btn2_y)/2;
+			}
+			else if(btn2_y<btn1_y-60) {
+				btn2_y+=60;
+				flag=false;
+				mid_y=(btn1_y+btn2_y)/2;
+			}
+			else{
+				mid_y=(btn1_y+btn2_y)/2-60;
+			}
+			g.drawLine(btn1_x,btn1_y,btn1_x,mid_y);
+			g.drawLine(btn1_x,mid_y,btn2_x,mid_y);
+			g.drawLine(btn2_x,mid_y,btn2_x,btn2_y);
+			if(flag){
+				g.drawLine(btn2_x,btn2_y,btn2_x+5,btn2_y-5);
+				g.drawLine(btn2_x,btn2_y,btn2_x-5,btn2_y-5);
+			}
+			else{
+				g.drawLine(btn2_x,btn2_y,btn2_x+5,btn2_y+5);
+				g.drawLine(btn2_x,btn2_y,btn2_x-5,btn2_y+5);
+			}
+		}
+	}
 }
 class LineParameter{
 
@@ -156,9 +205,15 @@ class MyActionListener implements ActionListener
 				center.KModel.config.addLayer(center.layer);
 				mb.setSize(120, 60);
 				mb.setLocation(500, 40);
+				if(center.paintPanel.maxButton == null)
+				{
+					center.paintPanel.maxButton = mb;
+					center.paintPanel.maxY = 40;
+					center.paintPanel.setPreferredSize(new Dimension(0,140));
+				}
 				//mb.setVisible(true);
 				mb.addActionListener(new MyActionListener(center));
-				center.bottomScrollPane.add(mb);
+				center.paintPanel.add(mb);
 				SwingUtilities.invokeLater(() -> {
 					center.updateUI();
 				});
@@ -237,17 +292,17 @@ class MouseEventListener implements MouseInputListener {
 			while(flag){
 				flag=false;
 				int index=0;
-			for(;index<center.bottomScrollPane.line.size();index++){
-				if(center.bottomScrollPane.line.get(index).btn1==sourceBtn||center.bottomScrollPane.line.get(index).btn2==sourceBtn)
+			for(;index<center.paintPanel.line.size();index++){
+				if(center.paintPanel.line.get(index).btn1==sourceBtn||center.paintPanel.line.get(index).btn2==sourceBtn)
 				{
-					center.bottomScrollPane.line.remove(index);
+					center.paintPanel.line.remove(index);
 					flag=true;
 				}
 			}}
-			center.bottomScrollPane.remove(sourceBtn);
-			//center.bottomScrollPane.revalidate();
+			center.paintPanel.remove(sourceBtn);
+			//center.paintPanel.revalidate();
 			SwingUtilities.invokeLater(() -> {
-				center.bottomScrollPane.repaint();
+				center.paintPanel.repaint();
 			});
 			//center.updateUI();
 		}
@@ -264,7 +319,7 @@ class MouseEventListener implements MouseInputListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		SwingUtilities.invokeLater(() -> {
-			center.bottomScrollPane.repaint();
+			center.paintPanel.repaint();
 		});
 	}
 
@@ -289,11 +344,17 @@ class MouseEventListener implements MouseInputListener {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		Point p = this.frame.getLocation();
-		this.frame.setLocation(
-				p.x + (e.getX() - origin.x),
-				p.y + (e.getY() - origin.y));
+		int x = p.x + (e.getX() - origin.x);
+		int y = p.y + (e.getY() - origin.y);
+		this.frame.setLocation(x, y);
+		if(center.paintPanel.maxY < y)
+		{
+			center.paintPanel.maxButton = this.frame;
+			center.paintPanel.maxY = y;
+			center.paintPanel.setPreferredSize(new Dimension(0,y+100));
+		}
 		SwingUtilities.invokeLater(() -> {
-			center.bottomScrollPane.repaint();
+			center.paintPanel.repaint();
 		});
 	}
 
