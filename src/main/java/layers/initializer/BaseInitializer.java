@@ -13,9 +13,16 @@ public class BaseInitializer extends ConfigurableObject {
         map = new HashMap<>();
         map.put("None", null);
         map.put("GlorotUniform", GlorotUniform.class);
+        map.put("GlorotNormal", GlorotNormal.class);
         map.put("Zeros", Zeros.class);
         map.put("Ones", Ones.class);
         map.put("Constant", Constant.class);
+        map.put("Identity", Identity.class);
+        map.put("Orthogonal", Orthogonal.class);
+        map.put("RandomNormal", RandomNormal.class);
+        map.put("RandomUniform", RandomUniform.class);
+        map.put("TruncatedNormal", TruncatedNormal.class);
+        map.put("VarianceScaling", VarianceScaling.class);
     }
 
     public static String[] getSelections() {
