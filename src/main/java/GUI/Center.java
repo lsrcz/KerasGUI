@@ -61,7 +61,10 @@ public class Center extends JPanel {
 	public void addLine(MyButton btn1,MyButton btn2,int eventNumber) {
 			if(eventNumber==2)
 			{
-				KModel.config.addEdge(btn1.layer,btn2.layer);
+				if(KModel.config.addEdge(btn1.layer,btn2.layer)==false);
+					//return;
+
+
 				paintPanel.line.add(new LineParameter(btn1,btn2));
 				updateUI();
 			}
@@ -84,6 +87,7 @@ public class Center extends JPanel {
 	{
 		layer = temp;
 		canCreate = true;
+		eventNumber=0;
 	}
 }
 /*class MyJScrollPane extends JScrollPane{
@@ -219,12 +223,17 @@ class MyActionListener implements ActionListener {
 					center.updateUI();
 				});
 				center.canCreate = false;
+				center.eventNumber=0;
 			}
 		}
 		else if(button==center.button2){
+			center.isSelected=false;
+			center.tmpButton=null;
 			center.eventNumber=2;
 		}
 		else if(button==center.button3){
+			center.isSelected=false;
+			center.tmpButton=null;
 			center.eventNumber=3;
 		}
 		else{
