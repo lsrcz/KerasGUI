@@ -149,7 +149,7 @@ public class Editor extends JFrame {
 
         setSize(1280, 960);
         setTitle("python编辑器");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setVisible(true);
     }
 

@@ -57,7 +57,9 @@ public class RightBar extends JPanel {
         add(temp);
         int count = getConfig(object.getConfigurableObject("config"), 0) + 1;
         setPreferredSize(new Dimension(250, count * 42));
-        updateUI();
+        SwingUtilities.invokeLater(() -> {
+            updateUI();
+        });
     }
 
     JPanel getPanel(ConfigurableObject obj, String str, int depth) {

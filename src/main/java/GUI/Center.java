@@ -10,12 +10,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import layers.layers.Dense;
+import layers.layers.Layer;
 import layers.model.Model;
 
 public class Center extends JPanel {
 
-	public Dense dense;
+	public Layer layer;
 	public boolean canCreate;
 	public JButton button1, button2, button3;
 	public MyJScrollPane bottomScrollPane;
@@ -57,12 +57,12 @@ public class Center extends JPanel {
 	public void addLine(MyButton btn1,MyButton btn2,int eventNumber) {
 			if(eventNumber==2)
 			{
-				KModel.config.addEdge(btn1.dense,btn2.dense);
+				KModel.config.addEdge(btn1.layer,btn2.layer);
 				bottomScrollPane.line.add(new LineParameter(btn1,btn2));
 				updateUI();
 			}
 			else if(eventNumber==3){
-				KModel.config.deleteEdge(btn1.dense,btn2.dense);
+				KModel.config.deleteEdge(btn1.layer,btn2.layer);
 				int index=0;
 				for(;index<bottomScrollPane.line.size();index++){
 					if(bottomScrollPane.line.get(index).btn1==btn1&&bottomScrollPane.line.get(index).btn2==btn2)
@@ -71,12 +71,14 @@ public class Center extends JPanel {
 						break;
 					}
 				}
-				updateUI();
+				SwingUtilities.invokeLater(() -> {
+					updateUI();
+				});
 			}
 	}
-	public void toCenter(Dense temp)
+	public void toCenter(Layer temp)
 	{
-		dense = temp;
+		layer = temp;
 		canCreate = true;
 	}
 }
@@ -150,14 +152,16 @@ class MyActionListener implements ActionListener
 			if(center.canCreate)
 			{
 //				System.out.println(dense.getString("name"));
-				MyButton mb =new MyButton(center.dense.getString("name"),center.dense, center);
-				center.KModel.config.addLayer(center.dense);
+				MyButton mb =new MyButton(center.layer.getString("name"),center.layer, center);
+				center.KModel.config.addLayer(center.layer);
 				mb.setSize(120, 60);
 				mb.setLocation(500, 40);
 				//mb.setVisible(true);
 				mb.addActionListener(new MyActionListener(center));
 				center.bottomScrollPane.add(mb);
-				center.updateUI();
+				SwingUtilities.invokeLater(() -> {
+					center.updateUI();
+				});
 				center.canCreate = false;
 			}
 		}
@@ -186,12 +190,12 @@ class MyActionListener implements ActionListener
 }
 class MyButton extends JButton
 {
-	public Dense dense;
+	public Layer layer;
 	Center center;
-	public MyButton(String text,Dense _dense, Center _center)
+	public MyButton(String text,Layer _layer, Center _center)
 	{
 		super(text);
-		dense = _dense;
+		layer = _layer;
 		center = _center;
 		MouseEventListener mouseListener = new MouseEventListener(this, center);
 		this.addMouseListener(mouseListener);
@@ -220,15 +224,14 @@ class MouseEventListener implements MouseInputListener {
 		if(e.getButton() == MouseEvent.BUTTON1)
 		{
 			MyButton sourceBtn = (MyButton)e.getSource();
-			center.rightBar.refresh(sourceBtn.dense);
-
+			center.rightBar.refresh(sourceBtn.layer);
 		}
 		else if(e.getButton() == MouseEvent.BUTTON3)
 		{
 			//System.out.println("lll");
 			MyButton sourceBtn = (MyButton)e.getSource();
 			//System.out.println(sourceBtn);
-			center.KModel.config.deleteLayer(sourceBtn.dense);
+			center.KModel.config.deleteLayer(sourceBtn.layer);
 
 			boolean flag=true;
 			while(flag){
@@ -243,7 +246,9 @@ class MouseEventListener implements MouseInputListener {
 			}}
 			center.bottomScrollPane.remove(sourceBtn);
 			//center.bottomScrollPane.revalidate();
-			center.bottomScrollPane.repaint();
+			SwingUtilities.invokeLater(() -> {
+				center.bottomScrollPane.repaint();
+			});
 			//center.updateUI();
 		}
 	}
@@ -258,7 +263,9 @@ class MouseEventListener implements MouseInputListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		center.bottomScrollPane.repaint();
+		SwingUtilities.invokeLater(() -> {
+			center.bottomScrollPane.repaint();
+		});
 	}
 
 	//锟斤拷锟斤拷平锟斤拷锟斤拷锟斤拷锟绞憋拷锟斤拷锟斤拷锟斤拷锟斤拷图锟斤拷为锟狡讹拷图锟斤拷
@@ -285,7 +292,9 @@ class MouseEventListener implements MouseInputListener {
 		this.frame.setLocation(
 				p.x + (e.getX() - origin.x),
 				p.y + (e.getY() - origin.y));
-		center.bottomScrollPane.repaint();
+		SwingUtilities.invokeLater(() -> {
+			center.bottomScrollPane.repaint();
+		});
 	}
 
 	@Override
