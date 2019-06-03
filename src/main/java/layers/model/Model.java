@@ -1,6 +1,8 @@
 package layers.model;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 public class Model {
@@ -12,4 +14,10 @@ public class Model {
     public final String backend = "tensorflow";
     @Expose
     public ModelConfig config = new ModelConfig();
+
+    public String dumpJSON() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
+
+        return gson.toJson(this);
+    }
 }
