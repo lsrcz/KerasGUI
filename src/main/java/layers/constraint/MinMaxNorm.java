@@ -9,5 +9,5 @@ public class MinMaxNorm extends BaseConstraint {
 
     @ConfigProperty
     @Expose
-    MaxNormConfig config;
+    MinMaxNormConfig config;
 }

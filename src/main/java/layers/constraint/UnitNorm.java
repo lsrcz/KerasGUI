@@ -9,5 +9,5 @@ public class UnitNorm extends BaseConstraint {
 
     @ConfigProperty
     @Expose
-    MaxNormConfig config;
+    UnitNormConfig config;
 }
