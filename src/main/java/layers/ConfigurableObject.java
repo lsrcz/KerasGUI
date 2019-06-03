@@ -218,6 +218,8 @@ public abstract class ConfigurableObject implements Serializable {
             Field f = p.getValue();
             f.setAccessible(true);
             if (f.getType() == String.class) {
+                if ("__null__".equals(str))
+                    str = null;
                 try {
                     f.set(obj, str);
                 } catch (IllegalAccessException ex) {
