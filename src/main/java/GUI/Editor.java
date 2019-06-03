@@ -1,7 +1,5 @@
 package GUI;
 
-import com.alee.laf.WebLookAndFeel;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -57,9 +55,16 @@ public class Editor extends JFrame {
             public void insertUpdate(DocumentEvent e) {
 
                 String inputText = textPane.getText();
-
-                char inputChar = textPane.getText().charAt(textPane.getCaretPosition());
-                // 换行时计算缩进
+                int caretPosition = textPane.getCaretPosition();
+                if (osName.equals("Windows")) {
+                    for (int i = 0; i < inputText.length(); i++) {
+                        if (inputText.charAt(i) == '\n') {
+                            caretPosition += 1;
+                        }
+                    }
+                }
+                char inputChar = textPane.getText().charAt(caretPosition);
+//                System.out.println((int)inputChar);
                 if ((inputChar == '\n' && !osName.equals("Mac")) || (inputChar == '\r' && osName.equals("Mac"))) {
                     String[] inputTextSplitedByEnter = inputText.split("[\r\n]+");
                     String lastLine = inputTextSplitedByEnter[inputTextSplitedByEnter.length - 1];
@@ -81,7 +86,6 @@ public class Editor extends JFrame {
                         }
                         textPane.setCaretPosition(textPane.getDocument().getLength());
                     }).start();
-                    // 补全引号
                 } else if (inputChar == '\'' || inputChar == '\"') {
                     if (countChar(inputText, inputChar) % 2 != 0) {
                         new Thread(() -> {
@@ -94,7 +98,6 @@ public class Editor extends JFrame {
                             }
                         }).start();
                     }
-                    // 补全圆括号
                 } else if (inputChar == '(') {
                     new Thread(() -> {
                         try {
@@ -106,14 +109,17 @@ public class Editor extends JFrame {
                     }).start();
                 } else {
                 }
-                // 检查格式
-                checkStyle();
+                if(osName.equals("Windows"))checkStyleWin();
+                else if(osName.equals("Mac"))checkStyleMac();
+                else checkStyleLinux();
 //                System.out.println("insert");
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                checkStyle();
+                if(osName.equals("Windows"))checkStyleWin();
+                else if(osName.equals("Mac"))checkStyleMac();
+                else checkStyleLinux();
 //                System.out.println("remove");
             }
 
@@ -153,11 +159,11 @@ public class Editor extends JFrame {
 
         setSize(1280, 960);
         setTitle("python编辑器");
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
-    private void checkStyle() {
+    private void checkStyleMac() {
         ArrayList<String> keywords = new ArrayList<>();
         ArrayList<String> builtins = new ArrayList<>();
         for (String keyword : keyWord) keywords.add(keyword);
@@ -181,9 +187,7 @@ public class Editor extends JFrame {
             } else if (inputText.charAt(i) == '#') {
                 int end, begin = i;
                 for (int j = begin; ; j++) {
-                    if ((inputText.charAt(j) == '\n' && !osName.equals("Mac"))
-                            || (inputText.charAt(j) == '\r' && osName.equals("Mac"))
-                            || j == inputText.length() - 1) {
+                    if (inputText.charAt(j) == '\r' || j == inputText.length() - 1) {
                         end = j;
                         break;
                     }
@@ -258,6 +262,269 @@ public class Editor extends JFrame {
             } else {
                 int begin = i;
                 setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+            }
+        }
+    }
+
+    private void checkStyleLinux() {
+        ArrayList<String> keywords = new ArrayList<>();
+        ArrayList<String> builtins = new ArrayList<>();
+        for (String keyword : keyWord) keywords.add(keyword);
+        for (String builtin : builtinFunction) builtins.add(builtin);
+
+        String inputText = textPane.getText();
+        for (int i = 0; i < inputText.length(); i++) {
+            // decorator橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
+            if (inputText.charAt(i) == '@') {
+                int end, begin = i;
+                for (int j = begin; ; j++) {
+                    if (isSpace(inputText.charAt(j)) || j == inputText.length() - 1) {
+                        end = j;
+                        break;
+                    }
+                }
+                setCharacterAttributes(begin, end - begin + 1,
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                i = end;
+                continue;
+            } else if (inputText.charAt(i) == '#') {
+                int end, begin = i;
+                for (int j = begin; ; j++) {
+                    if (inputText.charAt(j) == '\n' || j == inputText.length() - 1) {
+                        end = j;
+                        break;
+                    }
+                }
+                setCharacterAttributes(begin, end - begin + 1,
+                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet));
+                i = end;
+                continue;
+            } else if (isCharacter(inputText.charAt(i))) {
+                int end, begin = i;
+                boolean isKeyWord = false;
+                for (int j = begin; ; j++) {
+                    if (!isCharacter(inputText.charAt(j)) || j == inputText.length() - 1) {
+                        if (!isCharacter(inputText.charAt(j))) {
+                            end = j;
+                        } else {
+                            end = j + 1;
+                        }
+                        break;
+                    }
+                }
+                String word = inputText.substring(begin, end);
+                for (String keyWord : keywords) {
+                    if (word.equals(keyWord)) {
+                        setCharacterAttributes(begin, end - begin,
+                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet));
+                        isKeyWord = true;
+                        break;
+                    }
+                }
+                for (String builtin : builtins) {
+                    if (word.equals(builtin)) {
+                        setCharacterAttributes(begin, end - begin,
+                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet));
+                        isKeyWord = true;
+                        break;
+                    }
+                }
+                if (isKeyWord) {
+                    i = end - 1;
+                    continue;
+                }
+                setCharacterAttributes(begin, end - begin,
+                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                i = end - 1;
+                continue;
+            } else if (isNumber(inputText.charAt(i))) {
+                int begin = i;
+                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet));
+
+            } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
+                int end, begin = i;
+                if (i == inputText.length() - 1) {
+                    setCharacterAttributes(begin, 1,
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                    continue;
+                }
+                for (int j = begin + 1; ; j++) {
+                    if (j == inputText.length() - 1 || inputText.charAt(j) == '\'' || inputText.charAt(j) == '\"') {
+                        if (j == inputText.length() - 1) {
+                            end = j;
+                        } else {
+                            end = j + 1;
+                        }
+                        break;
+                    }
+                }
+                setCharacterAttributes(begin, end - begin,
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                i = end - 1;
+                continue;
+            } else {
+                int begin = i;
+                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+            }
+        }
+    }
+
+    private void checkStyleWin() {
+        ArrayList<String> keywords = new ArrayList<>();
+        ArrayList<String> builtins = new ArrayList<>();
+        for (String keyword : keyWord) keywords.add(keyword);
+        for (String builtin : builtinFunction) builtins.add(builtin);
+
+        String inputText = textPane.getText();
+        for (int i = 0; i < inputText.length(); i++) {
+            // decorator橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
+            if (inputText.charAt(i) == '@') {
+                int end, begin = i;
+                for (int j = begin; ; j++) {
+                    if (isSpace(inputText.charAt(j))) {
+                        end = j;
+                        break;
+                    }
+                    if (j == inputText.length() - 1) {
+                        end = j + 1;
+                        break;
+                    }
+                }
+                int length = end - begin;
+                int textBegin = begin;
+                for (int k = 0; k < begin; k++) {
+                    if (inputText.charAt(k) == '\n') {
+                        textBegin--;
+                    }
+                }
+                setCharacterAttributes(textBegin, length,
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                if (end != inputText.length() && inputText.charAt(end) == '\r') i = end + 1;
+                else i = end;
+                continue;
+            } else if (inputText.charAt(i) == '#') {
+                int end, begin = i;
+                for (int j = begin; ; j++) {
+                    if (inputText.charAt(j) == '\r') {
+                        end = j;
+                        break;
+                    }
+                    if (j == inputText.length() - 1) {
+                        end = j + 1;
+                        break;
+                    }
+                }
+                int length = end - begin;
+                int textBegin = begin;
+                for (int k = 0; k < begin; k++) {
+                    if (inputText.charAt(k) == '\n') {
+                        textBegin--;
+                    }
+                }
+                System.out.println(textBegin);
+                setCharacterAttributes(textBegin, length,
+                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet));
+                if (end != inputText.length()) i = end + 1;
+                else i = end;
+                continue;
+            } else if (isCharacter(inputText.charAt(i))) {
+                int end, begin = i;
+                boolean isKeyWord = false;
+                for (int j = begin; ; j++) {
+                    if (!isCharacter(inputText.charAt(j)) || j == inputText.length() - 1) {
+                        if (!isCharacter(inputText.charAt(j))) {
+                            end = j;
+                        } else {
+                            end = j + 1;
+                        }
+                        break;
+                    }
+                }
+                String word = inputText.substring(begin, end);
+                int textBegin = begin, length = end - begin;
+                for (int k = 0; k < begin; k++) {
+                    if (inputText.charAt(k) == '\n') {
+                        textBegin--;
+                    }
+                }
+                for (String keyWord : keywords) {
+                    if (word.equals(keyWord)) {
+                        setCharacterAttributes(textBegin, length,
+                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet));
+                        isKeyWord = true;
+                        break;
+                    }
+                }
+                for (String builtin : builtins) {
+                    if (word.equals(builtin)) {
+                        setCharacterAttributes(textBegin, length,
+                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet));
+                        isKeyWord = true;
+                        break;
+                    }
+                }
+                if (isKeyWord) {
+                    i = end - 1;
+                    continue;
+                }
+                setCharacterAttributes(textBegin, length,
+                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                i = end - 1;
+                continue;
+            } else if (isNumber(inputText.charAt(i))) {
+                int begin = i;
+                int textBegin = begin;
+                for (int k = 0; k < begin; k++) {
+                    if (inputText.charAt(k) == '\n') {
+                        textBegin--;
+                    }
+                }
+                setCharacterAttributes(textBegin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet));
+
+            } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
+                int end, begin = i;
+                if (i == inputText.length() - 1) {
+                    int textBegin = begin;
+                    for (int k = 0; k < begin; k++) {
+                        if (inputText.charAt(k) == '\n') {
+                            textBegin--;
+                        }
+                    }
+                    setCharacterAttributes(textBegin, 1,
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                    continue;
+                }
+                for (int j = begin + 1; ; j++) {
+                    if (j == inputText.length() - 1 || inputText.charAt(j) == '\'' || inputText.charAt(j) == '\"') {
+                        if (j == inputText.length() - 1) {
+                            end = j;
+                        } else {
+                            end = j + 1;
+                        }
+                        break;
+                    }
+                }
+                int textBegin = begin, length = end - begin;
+                for (int k = 0; k < begin; k++) {
+                    if (inputText.charAt(k) == '\n') {
+                        textBegin--;
+                    }
+                }
+                setCharacterAttributes(textBegin, length,
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                i = end - 1;
+                continue;
+            } else if (!isSpace(inputText.charAt(i))) {
+                int begin = i;
+                int textBegin = begin;
+                for (int k = 0; k < begin; k++) {
+                    if (inputText.charAt(k) == '\n') {
+                        textBegin--;
+                    }
+                }
+                setCharacterAttributes(textBegin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+            } else {
+
             }
         }
     }
@@ -347,11 +614,10 @@ public class Editor extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            WebLookAndFeel.install();
-            new Editor().init();
-        });
-
+//        SwingUtilities.invokeLater(() -> {
+//            WebLookAndFeel.install();
+//        });
+        new Editor().init();
 //        try {
 //            org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 //            UIManager.put("RootPane.setupButtonVisible", false);
