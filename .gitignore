@@ -82,3 +82,5 @@ target/
 .classpath
 .project
 .settings/
+
+.idea/misc.xml
