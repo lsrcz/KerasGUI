@@ -6,8 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LeftBar extends JPanel {
-    LeftBar(RightBar rightBar, Center center)
-    {
+    LeftBar(RightBar rightBar, Center center) {
         setLayout(new FlowLayout());
         JButton dense = new JButton("Dense");
         dense.setPreferredSize(new Dimension(150, 30));

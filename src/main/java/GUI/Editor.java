@@ -20,6 +20,7 @@ public class Editor extends JFrame {
     public JMenu menu;
     public JMenuItem saveItem;
     public JMenuItem runItem;
+    public String osName;
 
     public String currentFileName;
     public final static String[] keyWord = new String[]{"False", "None", "True", "and", "as", "assert", "break", "class", "continue",
@@ -41,6 +42,9 @@ public class Editor extends JFrame {
         menu = new JMenu("菜单");
         saveItem = new JMenuItem("保存");
         runItem = new JMenuItem("运行");
+        if (System.getProperty("os.name").indexOf("Windows") != -1) osName = "Windows";
+        else if (System.getProperty("os.name").indexOf("Linux") != -1) osName = "Linux";
+        else osName = "Mac";
     }
 
     public void init() {
@@ -56,8 +60,8 @@ public class Editor extends JFrame {
 
                 char inputChar = textPane.getText().charAt(textPane.getCaretPosition());
                 // 换行时计算缩进
-                if (inputChar == '\n') {
-                    String[] inputTextSplitedByEnter = inputText.split("\n");
+                if ((inputChar == '\n' && !osName.equals("Mac")) || (inputChar == '\r' && osName.equals("Mac"))) {
+                    String[] inputTextSplitedByEnter = inputText.split("[\r\n]+");
                     String lastLine = inputTextSplitedByEnter[inputTextSplitedByEnter.length - 1];
                     int spacesInFrontOfLastLine = countSpacesInFont(lastLine);
                     int spacesThisLine;
@@ -177,7 +181,9 @@ public class Editor extends JFrame {
             } else if (inputText.charAt(i) == '#') {
                 int end, begin = i;
                 for (int j = begin; ; j++) {
-                    if (inputText.charAt(j) == '\n' || j == inputText.length() - 1) {
+                    if ((inputText.charAt(j) == '\n' && !osName.equals("Mac"))
+                            || (inputText.charAt(j) == '\r' && osName.equals("Mac"))
+                            || j == inputText.length() - 1) {
                         end = j;
                         break;
                     }
@@ -296,14 +302,12 @@ public class Editor extends JFrame {
         return count;
     }
 
-    public static void CallPython(String path) throws IOException, InterruptedException {
+    public void CallPython(String path) throws IOException, InterruptedException {
 
         // define the command string
 //        path = "\"" + path + "\"";
-        String os = System.getProperty("os.name");
-        System.out.println(os);
         String[] commandStr;
-        if (os.indexOf("Windows") != -1) {
+        if (osName.equals("Windows")) {
             commandStr = new String[]{"python", path};
         } else {
             commandStr = new String[]{"python3", path};
@@ -316,8 +320,8 @@ public class Editor extends JFrame {
         String result = "";
         BufferedWriter out = new BufferedWriter(new FileWriter("wdnmd.txt"));
         while ((line = in.readLine()) != null) {
-            if (os.indexOf("Windows") != -1) result += line + "\r\n";
-            else if (os.indexOf("Linux") != -1) result += line + "\n";
+            if (osName.equals("Windows")) result += line + "\r\n";
+            else if (osName.equals("Linux")) result += line + "\n";
             else result += line + "\r";
         }
         System.out.println(result);

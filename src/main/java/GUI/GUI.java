@@ -1,11 +1,12 @@
 package GUI;
 
+import com.alee.laf.WebLookAndFeel;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GUI extends JFrame {
-    GUI()
-    {
+    GUI() {
         super("Keras GUI");
 
         setLayout(new BorderLayout());
@@ -16,17 +17,19 @@ public class GUI extends JFrame {
         add("East", rightScrollPane);
         add("West", new JScrollPane(leftBar));
         add("Center", center);
-        leftBar.setPreferredSize(new Dimension(250,0));
+        leftBar.setPreferredSize(new Dimension(250, 0));
         rightScrollPane.setPreferredSize(new Dimension(250, 0));
         setSize(1280, 720);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setFocusable(true);
         setVisible(true);
     }
-    
 
-    public static void main(String[] args)
-    {
-        new GUI();
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            WebLookAndFeel.install();
+            new GUI();
+        });
     }
 }
