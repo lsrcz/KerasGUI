@@ -177,29 +177,30 @@ class MyJPanel extends JPanel{
 		}
 	}
 }
-class LineParameter{
 
-		public MyButton btn1;
-		public MyButton btn2;
-		LineParameter(MyButton from,MyButton to){
-			btn1=from;
-			btn2=to;
-		}
+class LineParameter {
+
+    public MyButton btn1;
+    public MyButton btn2;
+
+    LineParameter(MyButton from, MyButton to) {
+        btn1 = from;
+        btn2 = to;
+    }
 
 }
-class MyActionListener implements ActionListener
-{
-	Center center;
-	public MyActionListener(Center _center)
-	{
-		center = _center;
-	}
-	public void actionPerformed( ActionEvent e ){
-		Object button = e.getSource();
-		if(button == center.button1)
-		{
-			if(center.canCreate)
-			{
+
+class MyActionListener implements ActionListener {
+    Center center;
+
+    public MyActionListener(Center _center) {
+        center = _center;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        Object button = e.getSource();
+        if (button == center.button1) {
+            if (center.canCreate) {
 //				System.out.println(dense.getString("name"));
 				MyButton mb =new MyButton(center.layer.getString("name"),center.layer, center);
 				center.KModel.config.addLayer(center.layer);
@@ -256,11 +257,9 @@ class MyButton extends JButton
 		this.addMouseListener(mouseListener);
 		this.addMouseMotionListener(mouseListener);
 	}
-
 }
 
 class MouseEventListener implements MouseInputListener {
-
 	Point origin;
 	//锟斤拷锟斤拷锟阶э拷锟揭拷贫锟斤拷锟侥匡拷锟斤拷锟斤拷
 	MyButton frame;

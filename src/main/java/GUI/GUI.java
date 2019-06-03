@@ -27,7 +27,7 @@ public class GUI extends JFrame {
         add("East", rightScrollPane);
         add("West", new JScrollPane(leftBar));
         add("Center", center);
-        leftBar.setPreferredSize(new Dimension(250,0));
+        leftBar.setPreferredSize(new Dimension(250, 0));
         rightScrollPane.setPreferredSize(new Dimension(250, 0));
         setJMenuBar(menuBar);
         menuBar.add(menu);
@@ -56,10 +56,12 @@ public class GUI extends JFrame {
         setFocusable(true);
         setVisible(true);
     }
-    
 
-    public static void main(String[] args)
-    {
-        new GUI();
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            WebLookAndFeel.install();
+            new GUI();
+        });
     }
 }
