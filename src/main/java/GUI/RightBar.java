@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
-import java.util.ArrayList;
 
 public class RightBar extends JPanel {
     final int TRUE = 1;
@@ -310,25 +309,49 @@ public class RightBar extends JPanel {
         if (obj.isStringConfig(str)) {
             String tempString = obj.getString(str);
             String[] selections = obj.getSelection(str);
+            int nullPos = -1;
             if (selections != null) {
-                JComboBox comboBox = new JComboBox(selections);
+                String[] selectionsForJComboBox = new String[selections.length];
+                System.arraycopy(selections, 0, selectionsForJComboBox, 0, selections.length);
+                for (int i = 0; i < selectionsForJComboBox.length; i++) {
+                    if (selectionsForJComboBox[i].equals("__null__")) {
+                        nullPos = i;
+                        selectionsForJComboBox[i] = "None";
+                    }
+                }
+                final int nullPosFinal = nullPos;
+                JComboBox comboBox = new JComboBox(selectionsForJComboBox);
                 int pos;
-                for (pos = 0; pos < selections.length; pos++)
-                    if (tempString.equals(selections[pos]))
-                        break;
+                for (pos = 0; pos < selections.length; pos++) {
+                    if (tempString == null) {
+                        if (selections[pos].equals("__null__"))
+                            break;
+                    } else {
+                        if (tempString.equals(selections[pos]))
+                            break;
+                    }
+                }
                 comboBox.setSelectedIndex(pos);
                 comboBox.addItemListener((e) -> {
                     switch (e.getStateChange()) {
                         case ItemEvent.SELECTED:
-                            String choice = (String) comboBox.getSelectedItem();
-                            try {
-                                obj.setString(str, choice);
-                            } catch (Exception exp) {
-                                exp.printStackTrace();
+                            if (comboBox.getSelectedIndex() == nullPosFinal) {
+                                try {
+                                    obj.setString(str, "__null__");
+                                } catch (Exception exp) {
+                                    exp.printStackTrace();
+                                }
+                            } else {
+                                String choice = (String) comboBox.getSelectedItem();
+                                try {
+                                    obj.setString(str, choice);
+                                } catch (Exception exp) {
+                                    exp.printStackTrace();
+                                }
                             }
                             rightBar.refresh(rightBar.object);
-                            //Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
-                            //System.out.println(gson.toJson(object));
+                            // Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
+                            // System.out.println(gson.toJson(object));
                             break;
                         case ItemEvent.DESELECTED:
                             break;
