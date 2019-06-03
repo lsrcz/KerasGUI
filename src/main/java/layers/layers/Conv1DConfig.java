@@ -3,6 +3,9 @@ package layers.layers;
 import com.google.gson.annotations.Expose;
 import layers.ConfigurableObject;
 import layers.annotation.*;
+import layers.constraint.BaseConstraint;
+import layers.initializer.BaseInitializer;
+import layers.regularizer.BaseRegularizer;
 
 public class Conv1DConfig extends ConfigurableObject {
     @LinkedProperty(name = "name")
@@ -50,8 +53,48 @@ public class Conv1DConfig extends ConfigurableObject {
     int dilation_rate = 1;
 
     @ConfigProperty
-    @SelectStringProperty(selections = {"__null__", "relu"})
+    @SelectStringProperty(selections = {"__null__", "softmax", "elu", "selu", "softplus", "softsign",
+            "relu", "tanh", "sigmoid", "hard_sigmoid", "exponential", "linear"})
     @DefaultStringProperty(defaultString = "__null__")
     @Expose
     String activation;
+
+    @ConfigProperty
+    @Expose
+    boolean use_bias = true;
+
+    @ConfigProperty
+    @DefaultStringProperty(defaultString = "GlorotUniform")
+    @Expose
+    BaseInitializer kernel_initializer;
+
+    @ConfigProperty
+    @DefaultStringProperty(defaultString = "Zeros")
+    @Expose
+    BaseInitializer bias_initializer;
+
+    @ConfigProperty
+    @Expose
+    @DefaultStringProperty(defaultString = "None")
+    BaseRegularizer kernel_regularizer;
+
+    @ConfigProperty
+    @Expose
+    @DefaultStringProperty(defaultString = "None")
+    BaseRegularizer bias_regularizer;
+
+    @ConfigProperty
+    @Expose
+    @DefaultStringProperty(defaultString = "None")
+    BaseRegularizer activity_regularizer;
+
+    @ConfigProperty
+    @Expose
+    @DefaultStringProperty(defaultString = "None")
+    BaseConstraint kernel_constraint;
+
+    @ConfigProperty
+    @Expose
+    @DefaultStringProperty(defaultString = "None")
+    BaseConstraint bias_constraint;
 }

@@ -37,7 +37,7 @@ public class DenseConfig extends ConfigurableObject {
 
     @ConfigProperty
     @Expose
-    boolean use_bias = false;
+    boolean use_bias = true;
 
     @ConfigProperty
     @DefaultStringProperty(defaultString = "GlorotUniform")
