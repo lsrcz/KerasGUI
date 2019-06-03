@@ -1,7 +1,7 @@
 package layers.model;
 
 import com.google.gson.annotations.Expose;
-import javafx.util.Pair;
+import layers.Pair;
 import layers.UniqueNameGenerator;
 import layers.layers.Layer;
 

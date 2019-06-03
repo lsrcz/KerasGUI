@@ -1,6 +1,5 @@
 package layers;
 
-import javafx.util.Pair;
 import layers.annotation.*;
 
 import java.lang.reflect.Field;
