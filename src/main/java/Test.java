@@ -101,6 +101,9 @@ public class Test {
         model.config.deleteEdge(d1, d2);
         System.out.println(gson.toJson(model));
 
+        System.out.println("DUMP:");
+        System.out.println(model.dumpJSON());
+
 
     }
 

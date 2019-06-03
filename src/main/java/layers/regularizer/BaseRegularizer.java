@@ -12,6 +12,7 @@ public class BaseRegularizer extends ConfigurableObject {
     static {
         map = new HashMap<>();
         map.put("None", null);
+        map.put("L1L2", L1L2.class);
     }
 
     public static String[] getSelections() {

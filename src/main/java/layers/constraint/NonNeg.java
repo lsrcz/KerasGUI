@@ -9,5 +9,5 @@ public class NonNeg extends BaseConstraint {
 
     @ConfigProperty
     @Expose
-    MaxNormConfig config;
+    NonNegConfig config;
 }
