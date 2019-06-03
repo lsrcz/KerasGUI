@@ -12,6 +12,7 @@ public class GUI extends JFrame {
     JMenuBar menuBar;
     JMenu menu;
     JMenuItem editor;
+    JMenuItem save;
     GUI()
     {
         super("Keras GUI");
@@ -23,7 +24,8 @@ public class GUI extends JFrame {
         LeftBar leftBar = new LeftBar(rightBar, center);
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
-        editor = new JMenuItem("Editor");
+        editor = new JMenuItem("Open Python Editor");
+        save = new JMenuItem("Save");
         add("East", rightScrollPane);
         add("West", new JScrollPane(leftBar));
         add("Center", center);
@@ -32,6 +34,7 @@ public class GUI extends JFrame {
         setJMenuBar(menuBar);
         menuBar.add(menu);
         menu.add(editor);
+        menu.add(save);
         editor.addActionListener((e) -> {
             class MyThread extends Thread{
                 @Override
