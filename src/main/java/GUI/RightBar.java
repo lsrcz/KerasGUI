@@ -322,6 +322,7 @@ public class RightBar extends JPanel {
                 for(int i = 0; i < dimension; i++)
                 {
                     textFields[i] = new MyTextField(i);
+                    textFields[i].setText(String.valueOf(tempIntArray[i]));
                     tempPanel = new JPanel();
                     tempPanel.add(textFields[i]);
                     temp.add(tempPanel);
