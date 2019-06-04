@@ -29,7 +29,7 @@ public abstract class Layer extends ConfigurableObject {
 
     public void addInEdge(String str) {
         Object[][] new_inbound_nodes = new Object[inbound_nodes[0].length + 1][];
-        System.arraycopy(inbound_nodes, 0, new_inbound_nodes, 0, inbound_nodes.length);
+        System.arraycopy(inbound_nodes[0], 0, new_inbound_nodes, 0, inbound_nodes[0].length);
         Object[] newEdge = new Object[4];
         newEdge[0] = str;
         newEdge[1] = 0;
