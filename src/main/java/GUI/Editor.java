@@ -68,6 +68,15 @@ public class Editor extends JFrame {
         );*/
     }
 
+    public String getTextPane()
+    {
+        return textPane.getText();
+    }
+
+    public void setTextPane(String text)
+    {
+        textPane.setText(text);
+    }
     public void init() {
 
         // Model model = new Model();
