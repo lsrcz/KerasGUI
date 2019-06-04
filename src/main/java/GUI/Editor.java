@@ -197,6 +197,14 @@ public class Editor extends JFrame {
             gui.save();
             String currentFileName = gui.getFileName();
             try {
+                File file = new File(currentFileName + ".py");
+                FileWriter fileWriter = new FileWriter(file.getName());
+                fileWriter.write(modelTextPane.getText() + "\r\n" + textPane.getText());
+                fileWriter.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            try {
                 CallPython(currentFileName + ".py");
             } catch (IOException ex) {
                 ex.printStackTrace();
