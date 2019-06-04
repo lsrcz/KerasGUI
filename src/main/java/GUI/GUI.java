@@ -124,6 +124,8 @@ public class GUI extends JFrame {
         }catch (IOException ex){
             ex.printStackTrace();
         }
+        center.paintPanel.removeAll();
+        center.paintPanel.line.clear();
         Center.KModel = center.SO.getModel();
         editor.setTextPane(center.SO.getEditorContents());
         UniqueNameGenerator.updateInstance(center.SO.getNameGenerator());
