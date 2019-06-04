@@ -14,7 +14,8 @@ import java.util.Set;
 
 public class ModelConfig implements Serializable {
     @Expose
-    private String name = UniqueNameGenerator.getInstance().generate("model", "model");
+    private String name = UniqueNameGenerator
+            .getInstance().generate("model", "model");
     @Expose
     private Layer[] layers;
     @Expose

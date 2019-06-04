@@ -18,7 +18,12 @@ public class Model implements Serializable {
     public ModelConfig config = new ModelConfig();
 
     public String dumpJSON() {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .setPrettyPrinting()
+                .serializeNulls()
+                .setVersion(1.0)
+                .create();
 
         return gson.toJson(this);
     }

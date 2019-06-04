@@ -14,29 +14,31 @@ public abstract class ConfigurableObject implements Serializable {
 
     public ConfigurableObject() {
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
-            if (f.isAnnotationPresent(ConfigProperty.class)) {
-                f.setAccessible(true);
-                if (ConfigurableObject.class.isAssignableFrom(f.getType())) {
-                    if (f.isAnnotationPresent(DefaultStringProperty.class)) {
-                        DefaultStringProperty annotation = f.getAnnotation(DefaultStringProperty.class);
-                        try {
-                            setString(f.getName(), annotation.defaultString());
-                            if (f.get(this) != null)
-                                ((ConfigurableObject) f.get(this)).link = this;
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            System.exit(-1);
-                        }
-                    } else {
-                        try {
-                            ConfigurableObject obj = (ConfigurableObject) f.getType().newInstance();
-                            obj.link = this;
-                            f.set(this, obj);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            System.exit(-1);
-                        }
-                    }
+            if (!f.isAnnotationPresent(ConfigProperty.class)) {
+                continue;
+            }
+            if (!ConfigurableObject.class.isAssignableFrom(f.getType())) {
+                continue;
+            }
+            f.setAccessible(true);
+            if (f.isAnnotationPresent(DefaultStringProperty.class)) {
+                DefaultStringProperty annotation = f.getAnnotation(DefaultStringProperty.class);
+                try {
+                    setString(f.getName(), annotation.defaultString());
+                    if (f.get(this) != null)
+                        ((ConfigurableObject) f.get(this)).link = this;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.exit(-1);
+                }
+            } else {
+                try {
+                    ConfigurableObject obj = (ConfigurableObject) f.getType().newInstance();
+                    obj.link = this;
+                    f.set(this, obj);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.exit(-1);
                 }
             }
         }
@@ -56,38 +58,44 @@ public abstract class ConfigurableObject implements Serializable {
 
     public void init() {
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
-            if (f.isAnnotationPresent(ConfigProperty.class)) {
-                f.setAccessible(true);
-                if (ConfigurableObject.class.isAssignableFrom(f.getType())) {
-                    try {
-                        ConfigurableObject obj = (ConfigurableObject) f.get(this);
-                        if (obj != null)
-                            obj.init();
-                    } catch (Exception ex) {
-                        throw new Error("BUG!!!");
-                    }
-                }
+            if (!f.isAnnotationPresent(ConfigProperty.class)) {
+                continue;
+            }
+            if (!ConfigurableObject.class.isAssignableFrom(f.getType())) {
+                continue;
+            }
+            f.setAccessible(true);
+            try {
+                ConfigurableObject obj = (ConfigurableObject) f.get(this);
+                if (obj != null)
+                    obj.init();
+            } catch (Exception ex) {
+                throw new Error("BUG!!!");
             }
         }
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
-            if (f.isAnnotationPresent(ConfigProperty.class)) {
-                if (f.isAnnotationPresent(UniqueProperty.class)) {
-                    UniqueProperty annotation = f.getAnnotation(UniqueProperty.class);
-                    try {
-                        setString(f.getName(), UniqueNameGenerator.getInstance().generate(annotation.scope(), annotation.prefix()));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        System.exit(-1);
-                    }
+            if (!f.isAnnotationPresent(ConfigProperty.class)) {
+                continue;
+            }
+            if (f.isAnnotationPresent(UniqueProperty.class)) {
+                UniqueProperty annotation = f.getAnnotation(UniqueProperty.class);
+                try {
+                    setString(f.getName(),
+                            UniqueNameGenerator.getInstance()
+                                    .generate(annotation.scope(), annotation.prefix()));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.exit(-1);
                 }
-                if (f.isAnnotationPresent(DefaultStringProperty.class) && !ConfigurableObject.class.isAssignableFrom(f.getType())) {
-                    DefaultStringProperty annotation = f.getAnnotation(DefaultStringProperty.class);
-                    try {
-                        setString(f.getName(), annotation.defaultString());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        System.exit(-1);
-                    }
+            }
+            if (f.isAnnotationPresent(DefaultStringProperty.class) &&
+                    !ConfigurableObject.class.isAssignableFrom(f.getType())) {
+                DefaultStringProperty annotation = f.getAnnotation(DefaultStringProperty.class);
+                try {
+                    setString(f.getName(), annotation.defaultString());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.exit(-1);
                 }
             }
         }
