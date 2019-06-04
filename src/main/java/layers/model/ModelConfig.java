@@ -49,6 +49,7 @@ public class ModelConfig implements Serializable {
         System.arraycopy(layers, 0, newlayers, 0, layers.length);
         newlayers[layers.length] = obj;
         layers = newlayers;
+        inferInputOutputLayer();
     }
 
     // delete a layer and all associated edges
@@ -78,6 +79,7 @@ public class ModelConfig implements Serializable {
                     deleteEdge(edge.getKey(), edge.getValue());
                 }
                 updateEdge();
+                inferInputOutputLayer();
                 return;
             }
         }
@@ -134,6 +136,7 @@ public class ModelConfig implements Serializable {
             return false;
         }
         updateEdge();
+        inferInputOutputLayer();
         return true;
     }
 
@@ -144,6 +147,7 @@ public class ModelConfig implements Serializable {
         edges.get(from).remove(to);
         if (edges.get(from).isEmpty())
             edges.remove(from);
+        inferInputOutputLayer();
         updateEdge();
     }
 
@@ -169,7 +173,7 @@ public class ModelConfig implements Serializable {
 
     private Object[][] addIOLayer(Layer l, Object[][] orig) {
         Object[][] new_layers = new Object[orig.length + 1][];
-        System.arraycopy(new_layers, 0, orig, 0, orig.length);
+        System.arraycopy(orig, 0, new_layers, 0, orig.length);
         Object[] new_layer = new Object[3];
         new_layer[0] = l.getName();
         new_layer[1] = 0;
@@ -219,5 +223,26 @@ public class ModelConfig implements Serializable {
                 return layer;
         }
         return null;
+    }
+
+    public void inferInputOutputLayer() {
+        Set<Layer> inputLayers = new HashSet<>();
+        Set<Layer> outputLayers = new HashSet<>();
+        for (Layer l : layers) {
+            inputLayers.add(l);
+            outputLayers.add(l);
+        }
+        for (Layer from : edges.keySet()) {
+            outputLayers.remove(from);
+            for (Layer to : edges.get(from)) {
+                inputLayers.remove(to);
+            }
+        }
+        clearInputLayer();
+        clearOutputLayer();
+        for (Layer l : inputLayers)
+            addInputLayer(l);
+        for (Layer l : outputLayers)
+            addOutputLayer(l);
     }
 }

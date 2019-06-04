@@ -55,10 +55,14 @@ public class Editor extends JFrame {
         else osName = "Mac";
     }
 
-    public void refresh(){
-
-        String head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" +
-                Center.KModel.dumpJSON() + "''')";
+    public void refresh() {
+        String head;
+        if (osName.equals("Windows"))
+            head = "import tensorflow as tf\r\n" + "model = tf.keras.models.model_from_json('''\r\n" + Center.KModel.dumpJSON() + "''')";
+        else if (osName.equals("Linux"))
+            head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" + Center.KModel.dumpJSON() + "''')";
+        else
+            head = "import tensorflow as tf\r" + "model = tf.keras.models.model_from_json('''\r" + Center.KModel.dumpJSON() + "''')";
         modelTextPane.setText(head);
         /*
         modelTextPane.setText(
@@ -68,15 +72,14 @@ public class Editor extends JFrame {
         );*/
     }
 
-    public String getTextPane()
-    {
+    public String getTextPane() {
         return textPane.getText();
     }
 
-    public void setTextPane(String text)
-    {
+    public void setTextPane(String text) {
         textPane.setText(text);
     }
+
     public void init() {
 
         // Model model = new Model();
@@ -219,7 +222,12 @@ public class Editor extends JFrame {
             try {
                 File file = new File(currentFileName + ".py");
                 FileWriter fileWriter = new FileWriter(file.getName());
-                fileWriter.write(modelTextPane.getText() + "\n" + textPane.getText());
+                if (osName.equals("Windows"))
+                    fileWriter.write(modelTextPane.getText() + "\r\n" + textPane.getText());
+                else if (osName.equals("Linux"))
+                    fileWriter.write(modelTextPane.getText() + "\n" + textPane.getText());
+                else
+                    fileWriter.write(modelTextPane.getText() + "\r" + textPane.getText());
                 fileWriter.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -560,6 +568,17 @@ public class Editor extends JFrame {
 
             } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
                 int end, begin = i;
+                if ((i - 2) >= 0 && inputText.charAt(i - 1) == '\'' && inputText.charAt(i - 2) == '\'') {
+                    int textBegin = begin;
+                    for (int k = 0; k < begin; k++) {
+                        if (inputText.charAt(k) == '\n') {
+                            textBegin--;
+                        }
+                    }
+                    setCharacterAttributes(textBegin, 1,
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
+                    continue;
+                }
                 if (i == inputText.length() - 1) {
                     int textBegin = begin;
                     for (int k = 0; k < begin; k++) {
