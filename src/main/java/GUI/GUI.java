@@ -114,6 +114,7 @@ public class GUI extends JFrame {
         editor.setTextPane(center.SO.getEditorContents());
         UniqueNameGenerator.updateInstance(center.SO.getNameGenerator());
         center.getBack();
+        editor.refresh();
     }
 
     public String getFileName() {
