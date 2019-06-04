@@ -1,10 +1,14 @@
 package GUI;
 
+import com.alee.laf.WebLookAndFeel;
+import layers.model.Model;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
@@ -12,8 +16,9 @@ import java.util.ArrayList;
 
 
 public class Editor extends JFrame {
-    public JTextPane textPane;
-    public JScrollPane scrollPane;
+
+    public JTextPane textPane, modelTextPane;
+    public JScrollPane scrollPane, modelScrollPane;
     public JMenuBar menuBar;
     public JMenu menu;
     public JMenuItem saveItem;
@@ -36,6 +41,8 @@ public class Editor extends JFrame {
     public Editor() {
         textPane = new JTextPane();
         scrollPane = new JScrollPane(textPane);
+        modelTextPane = new JTextPane();
+        modelScrollPane = new JScrollPane(modelTextPane);
         menuBar = new JMenuBar();
         menu = new JMenu("菜单");
         saveItem = new JMenuItem("保存");
@@ -45,11 +52,43 @@ public class Editor extends JFrame {
         else osName = "Mac";
     }
 
+    public void refresh(){
+        modelTextPane.setText(Center.KModel.dumpJSON());
+    }
+
     public void init() {
+
+        Model model = new Model();
+        System.out.println(model.dumpJSON());
+        setLayout(new BorderLayout());
+        add(modelScrollPane, BorderLayout.NORTH);
+        modelTextPane.setEditable(false);
+        modelTextPane.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if (osName.equals("Windows")) checkStyleWin(modelTextPane);
+                else if (osName.equals("Mac")) checkStyleMac(modelTextPane);
+                else checkStyleLinux(modelTextPane);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (osName.equals("Windows")) checkStyleWin(modelTextPane);
+                else if (osName.equals("Mac")) checkStyleMac(modelTextPane);
+                else checkStyleLinux(modelTextPane);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        String head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" +
+                model.dumpJSON() + "''')";
+        modelTextPane.setText(head);
 
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        add(scrollPane);
+        add(scrollPane, BorderLayout.CENTER);
         textPane.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -109,17 +148,17 @@ public class Editor extends JFrame {
                     }).start();
                 } else {
                 }
-                if(osName.equals("Windows"))checkStyleWin();
-                else if(osName.equals("Mac"))checkStyleMac();
-                else checkStyleLinux();
+                if (osName.equals("Windows")) checkStyleWin(textPane);
+                else if (osName.equals("Mac")) checkStyleMac(textPane);
+                else checkStyleLinux(textPane);
 //                System.out.println("insert");
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                if(osName.equals("Windows"))checkStyleWin();
-                else if(osName.equals("Mac"))checkStyleMac();
-                else checkStyleLinux();
+                if (osName.equals("Windows")) checkStyleWin(textPane);
+                else if (osName.equals("Mac")) checkStyleMac(textPane);
+                else checkStyleLinux(textPane);
 //                System.out.println("remove");
             }
 
@@ -138,7 +177,7 @@ public class Editor extends JFrame {
             try {
                 File file = new File(currentFileName + ".py");
                 FileWriter fileWriter = new FileWriter(file.getName());
-                fileWriter.write(textPane.getText());
+                fileWriter.write(modelTextPane.getText() + "\n" + textPane.getText());
                 fileWriter.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -163,15 +202,15 @@ public class Editor extends JFrame {
         //setVisible(true);
     }
 
-    private void checkStyleMac() {
+    private void checkStyleMac(JTextPane pane) {
         ArrayList<String> keywords = new ArrayList<>();
         ArrayList<String> builtins = new ArrayList<>();
         for (String keyword : keyWord) keywords.add(keyword);
         for (String builtin : builtinFunction) builtins.add(builtin);
 
-        String inputText = textPane.getText();
+        String inputText = pane.getText();
         for (int i = 0; i < inputText.length(); i++) {
-            // decorator橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
+            // 装饰器橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
             if (inputText.charAt(i) == '@') {
                 int end, begin = i;
                 for (int j = begin; ; j++) {
@@ -181,7 +220,7 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(begin, end - begin + 1,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                 i = end;
                 continue;
             } else if (inputText.charAt(i) == '#') {
@@ -193,7 +232,7 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(begin, end - begin + 1,
-                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet), pane);
                 i = end;
                 continue;
             } else if (isCharacter(inputText.charAt(i))) {
@@ -213,7 +252,7 @@ public class Editor extends JFrame {
                 for (String keyWord : keywords) {
                     if (word.equals(keyWord)) {
                         setCharacterAttributes(begin, end - begin,
-                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet));
+                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet), pane);
                         isKeyWord = true;
                         break;
                     }
@@ -221,7 +260,7 @@ public class Editor extends JFrame {
                 for (String builtin : builtins) {
                     if (word.equals(builtin)) {
                         setCharacterAttributes(begin, end - begin,
-                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet));
+                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet), pane);
                         isKeyWord = true;
                         break;
                     }
@@ -231,18 +270,18 @@ public class Editor extends JFrame {
                     continue;
                 }
                 setCharacterAttributes(begin, end - begin,
-                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
                 i = end - 1;
                 continue;
             } else if (isNumber(inputText.charAt(i))) {
                 int begin = i;
-                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet));
+                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet), pane);
 
             } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
                 int end, begin = i;
                 if (i == inputText.length() - 1) {
                     setCharacterAttributes(begin, 1,
-                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                     continue;
                 }
                 for (int j = begin + 1; ; j++) {
@@ -256,23 +295,23 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(begin, end - begin,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                 i = end - 1;
                 continue;
             } else {
                 int begin = i;
-                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
             }
         }
     }
 
-    private void checkStyleLinux() {
+    private void checkStyleLinux(JTextPane pane) {
         ArrayList<String> keywords = new ArrayList<>();
         ArrayList<String> builtins = new ArrayList<>();
         for (String keyword : keyWord) keywords.add(keyword);
         for (String builtin : builtinFunction) builtins.add(builtin);
 
-        String inputText = textPane.getText();
+        String inputText = pane.getText();
         for (int i = 0; i < inputText.length(); i++) {
             // decorator橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
             if (inputText.charAt(i) == '@') {
@@ -284,7 +323,7 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(begin, end - begin + 1,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                 i = end;
                 continue;
             } else if (inputText.charAt(i) == '#') {
@@ -296,7 +335,7 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(begin, end - begin + 1,
-                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet), pane);
                 i = end;
                 continue;
             } else if (isCharacter(inputText.charAt(i))) {
@@ -316,7 +355,7 @@ public class Editor extends JFrame {
                 for (String keyWord : keywords) {
                     if (word.equals(keyWord)) {
                         setCharacterAttributes(begin, end - begin,
-                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet));
+                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet), pane);
                         isKeyWord = true;
                         break;
                     }
@@ -324,7 +363,7 @@ public class Editor extends JFrame {
                 for (String builtin : builtins) {
                     if (word.equals(builtin)) {
                         setCharacterAttributes(begin, end - begin,
-                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet));
+                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet), pane);
                         isKeyWord = true;
                         break;
                     }
@@ -334,18 +373,18 @@ public class Editor extends JFrame {
                     continue;
                 }
                 setCharacterAttributes(begin, end - begin,
-                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
                 i = end - 1;
                 continue;
             } else if (isNumber(inputText.charAt(i))) {
                 int begin = i;
-                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet));
+                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet), pane);
 
             } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
                 int end, begin = i;
                 if (i == inputText.length() - 1) {
                     setCharacterAttributes(begin, 1,
-                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                     continue;
                 }
                 for (int j = begin + 1; ; j++) {
@@ -359,23 +398,23 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(begin, end - begin,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                 i = end - 1;
                 continue;
             } else {
                 int begin = i;
-                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
             }
         }
     }
 
-    private void checkStyleWin() {
+    private void checkStyleWin(JTextPane pane) {
         ArrayList<String> keywords = new ArrayList<>();
         ArrayList<String> builtins = new ArrayList<>();
         for (String keyword : keyWord) keywords.add(keyword);
         for (String builtin : builtinFunction) builtins.add(builtin);
 
-        String inputText = textPane.getText();
+        String inputText = pane.getText();
         for (int i = 0; i < inputText.length(); i++) {
             // decorator橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
             if (inputText.charAt(i) == '@') {
@@ -398,7 +437,7 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(textBegin, length,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                 if (end != inputText.length() && inputText.charAt(end) == '\r') i = end + 1;
                 else i = end;
                 continue;
@@ -423,7 +462,7 @@ public class Editor extends JFrame {
                 }
                 System.out.println(textBegin);
                 setCharacterAttributes(textBegin, length,
-                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet), pane);
                 if (end != inputText.length()) i = end + 1;
                 else i = end;
                 continue;
@@ -450,7 +489,7 @@ public class Editor extends JFrame {
                 for (String keyWord : keywords) {
                     if (word.equals(keyWord)) {
                         setCharacterAttributes(textBegin, length,
-                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet));
+                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet), pane);
                         isKeyWord = true;
                         break;
                     }
@@ -458,7 +497,7 @@ public class Editor extends JFrame {
                 for (String builtin : builtins) {
                     if (word.equals(builtin)) {
                         setCharacterAttributes(textBegin, length,
-                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet));
+                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet), pane);
                         isKeyWord = true;
                         break;
                     }
@@ -468,7 +507,7 @@ public class Editor extends JFrame {
                     continue;
                 }
                 setCharacterAttributes(textBegin, length,
-                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
                 i = end - 1;
                 continue;
             } else if (isNumber(inputText.charAt(i))) {
@@ -479,7 +518,7 @@ public class Editor extends JFrame {
                         textBegin--;
                     }
                 }
-                setCharacterAttributes(textBegin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet));
+                setCharacterAttributes(textBegin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet), pane);
 
             } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
                 int end, begin = i;
@@ -491,7 +530,7 @@ public class Editor extends JFrame {
                         }
                     }
                     setCharacterAttributes(textBegin, 1,
-                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                     continue;
                 }
                 for (int j = begin + 1; ; j++) {
@@ -511,7 +550,7 @@ public class Editor extends JFrame {
                     }
                 }
                 setCharacterAttributes(textBegin, length,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet));
+                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
                 i = end - 1;
                 continue;
             } else if (!isSpace(inputText.charAt(i))) {
@@ -522,15 +561,15 @@ public class Editor extends JFrame {
                         textBegin--;
                     }
                 }
-                setCharacterAttributes(textBegin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet));
+                setCharacterAttributes(textBegin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
             } else {
 
             }
         }
     }
 
-    private void setCharacterAttributes(int begin, int length, SimpleAttributeSet simpleAttributeSet) {
-        new Thread(() -> textPane.getStyledDocument()
+    private void setCharacterAttributes(int begin, int length, SimpleAttributeSet simpleAttributeSet, JTextPane pane) {
+        new Thread(() -> pane.getStyledDocument()
                 .setCharacterAttributes(begin, length, simpleAttributeSet, true)).start();
     }
 
@@ -614,10 +653,10 @@ public class Editor extends JFrame {
     }
 
     public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            WebLookAndFeel.install();
-//        });
-        new Editor().init();
+        SwingUtilities.invokeLater(() -> {
+            WebLookAndFeel.install();
+            new Editor().init();
+        });
 //        try {
 //            org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 //            UIManager.put("RootPane.setupButtonVisible", false);

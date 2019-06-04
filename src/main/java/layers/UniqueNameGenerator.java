@@ -29,4 +29,10 @@ public class UniqueNameGenerator {
         scopeMap.put(name, num + 1);
         return ret;
     }
+
+    public static void updateInstance(UniqueNameGenerator instance) {
+        if (instance == null)
+            throw new IllegalArgumentException("Don't save null");
+        UniqueNameGenerator.instance = instance;
+    }
 }
