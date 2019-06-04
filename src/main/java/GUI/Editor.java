@@ -51,8 +51,9 @@ public class Editor extends JFrame {
         // saveItem = new JMenuItem("保存");
         runItem = new JMenuItem("Run");
         if (System.getProperty("os.name").indexOf("Windows") != -1) osName = "Windows";
-        else if (System.getProperty("os.name").indexOf("Linux") != -1) osName = "Linux";
-        else osName = "Mac";
+        else osName="Linux";
+//        else if (System.getProperty("os.name").indexOf("Linux") != -1) osName = "Linux";
+//        else osName = "Mac";
     }
 
     public void refresh() {
@@ -325,6 +326,12 @@ public class Editor extends JFrame {
 
             } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
                 int end, begin = i;
+                if ((i - 2) >= 0 && inputText.charAt(i - 1) == '\'' && inputText.charAt(i - 2) == '\'') {
+                    int textBegin = begin;
+                    setCharacterAttributes(textBegin, 1,
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
+                    continue;
+                }
                 if (i == inputText.length() - 1) {
                     setCharacterAttributes(begin, 1,
                             MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
@@ -428,6 +435,12 @@ public class Editor extends JFrame {
 
             } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
                 int end, begin = i;
+                if ((i - 2) >= 0 && inputText.charAt(i - 1) == '\'' && inputText.charAt(i - 2) == '\'') {
+                    int textBegin = begin;
+                    setCharacterAttributes(textBegin, 1,
+                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
+                    continue;
+                }
                 if (i == inputText.length() - 1) {
                     setCharacterAttributes(begin, 1,
                             MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
