@@ -60,6 +60,15 @@ public class Editor extends JFrame {
         modelTextPane.setText(Center.KModel.dumpJSON());
     }
 
+    public String getTextPane()
+    {
+        return textPane.getText();
+    }
+
+    public void setTextPane(String text)
+    {
+        textPane.setText(text);
+    }
     public void init() {
 
         Model model = new Model();

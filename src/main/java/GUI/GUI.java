@@ -2,6 +2,7 @@ package GUI;
 
 import com.alee.laf.WebLookAndFeel;
 import fileio.SaveObject;
+import layers.UniqueNameGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,7 @@ public class GUI extends JFrame {
     JMenuItem save;
     SaveObject SO;
     Editor editor;
+    Center center;
 
     private String fileName = null;
 
@@ -27,7 +29,7 @@ public class GUI extends JFrame {
         SO = new SaveObject();
         RightBar rightBar = new RightBar(editor);
         JScrollPane rightScrollPane = new JScrollPane(rightBar);
-        Center center = new Center(rightBar, SO,editor);
+        center = new Center(rightBar, SO,editor);
         LeftBar leftBar = new LeftBar(rightBar, center);
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
@@ -49,6 +51,9 @@ public class GUI extends JFrame {
         });
         save.addActionListener((e) -> {
             save();
+        });
+        load.addActionListener((e) -> {
+            load();
         });
         /*load.addActionListener((e)->{
             JFileChooser fileChooser = new JFileChooser();
@@ -82,11 +87,33 @@ public class GUI extends JFrame {
         if (fileName == null) {
             fileName = JOptionPane.showInputDialog("Please input file name： ");
         }
+        if(fileName == null)
+            return;
         try {
-            SO.toFile(fileName + ".obj");
+            center.SO.setModel(center.KModel);
+            center.SO.setEditorContents(editor.getTextPane());
+            center.SO.setNameGenerator(UniqueNameGenerator.getInstance());
+            center.SO.toFile(fileName + ".obj");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void load(){
+        String tempFileName = JOptionPane.showInputDialog("Please input file name： ");
+        if (tempFileName == null)
+            return;
+        else
+            fileName = tempFileName;
+        try{
+            center.SO = SaveObject.fromFile(fileName + ".obj");
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
+        center.KModel = center.SO.getModel();
+        editor.setTextPane(center.SO.getEditorContents());
+        UniqueNameGenerator.updateInstance(center.SO.getNameGenerator());
+        center.getBack();
     }
 
     public String getFileName() {

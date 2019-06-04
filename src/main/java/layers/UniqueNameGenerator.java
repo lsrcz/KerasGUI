@@ -1,10 +1,11 @@
 package layers;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 // generate unique names
-public class UniqueNameGenerator {
+public class UniqueNameGenerator implements Serializable {
     private Map<String, Map<String, Integer>> m;
     private static UniqueNameGenerator instance = new UniqueNameGenerator();
 
