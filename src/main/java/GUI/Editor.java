@@ -60,6 +60,9 @@ public class Editor extends JFrame {
         String head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" +
                 Center.KModel.dumpJSON() + "''')";
         modelTextPane.setText(head);
+        if (osName.equals("Windows")) checkStyleWin(modelTextPane);
+        else if (osName.equals("Mac")) checkStyleMac(modelTextPane);
+        else checkStyleLinux(modelTextPane);
         /*
         modelTextPane.setText(
 
