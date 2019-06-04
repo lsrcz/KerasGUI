@@ -1,22 +1,26 @@
 package fileio;
 
-import layers.layers.Layer;
+import GUI.MyButton;
+import layers.UniqueNameGenerator;
 import layers.model.Model;
 
 import java.io.*;
 import java.util.ArrayList;
-
-import javax.swing.JButton;
-
-import GUI.Center;
-import GUI.MyAttributeSet;
-import GUI.MyButton;
 
 public class SaveObject implements Serializable {
     private Model model;
     private String editorContents;
     //private MyButton[] button;
     private ArrayList<MyButton> button;
+    private UniqueNameGenerator nameGenerator;
+
+    public UniqueNameGenerator getNameGenerator() {
+        return nameGenerator;
+    }
+
+    public void setNameGenerator(UniqueNameGenerator nameGenerator) {
+        this.nameGenerator = nameGenerator;
+    }
 
     public SaveObject()
     {
