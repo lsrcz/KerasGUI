@@ -95,7 +95,7 @@ public class RightBar extends JPanel {
                     }
                     try {
                         obj.setNullableInt(str, Integer.valueOf(integer));
-                        editor.refresh();
+                        //editor.refresh();
                     } catch (Exception exp) {
                         exp.printStackTrace();
                     }
@@ -145,7 +145,7 @@ public class RightBar extends JPanel {
                     }
                     try {
                         obj.setInt(str, Integer.valueOf(integer));
-                        editor.refresh();
+                        //editor.refresh();
 
                     } catch (Exception exp) {
                         exp.printStackTrace();
@@ -195,7 +195,7 @@ public class RightBar extends JPanel {
                     }
                     try {
                         obj.setDouble(str, Double.valueOf(tempDouble));
-                        editor.refresh();
+                        //editor.refresh();
                     } catch (Exception exp) {
                         exp.printStackTrace();
                     }
@@ -238,7 +238,7 @@ public class RightBar extends JPanel {
                         String choice = (String) comboBox.getSelectedItem();
                         try {
                             obj.setString(str, choice);
-                            editor.refresh();
+                            //editor.refresh();
                         } catch (Exception exp) {
                             exp.printStackTrace();
                         }
@@ -360,7 +360,7 @@ public class RightBar extends JPanel {
                             } catch (Exception exp) {
                                 exp.printStackTrace();
                             }
-                            editor.refresh();
+                            //editor.refresh();
                            // Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
                            // System.out.println(gson.toJson(object));
                         }
@@ -393,14 +393,14 @@ public class RightBar extends JPanel {
                         if (choice == TRUE) {
                             try {
                                 obj.setBoolean(str, true);
-                                editor.refresh();
+                               // editor.refresh();
                             } catch (Exception exp) {
                                 exp.printStackTrace();
                             }
                         } else {
                             try {
                                 obj.setBoolean(str, false);
-                                editor.refresh();
+                                //editor.refresh();
                             } catch (Exception exp) {
                                 exp.printStackTrace();
                             }
@@ -447,7 +447,7 @@ public class RightBar extends JPanel {
                             if (comboBox.getSelectedIndex() == nullPosFinal) {
                                 try {
                                     obj.setString(str, "__null__");
-                                    editor.refresh();
+                                    //editor.refresh();
                                 } catch (Exception exp) {
                                     exp.printStackTrace();
                                 }
@@ -455,7 +455,7 @@ public class RightBar extends JPanel {
                                 String choice = (String) comboBox.getSelectedItem();
                                 try {
                                     obj.setString(str, choice);
-                                    editor.refresh();
+                                    //editor.refresh();
                                 } catch (Exception exp) {
                                     exp.printStackTrace();
                                 }
@@ -480,7 +480,7 @@ public class RightBar extends JPanel {
                             String string = textField.getText();
                             try {
                                 obj.setString(str, string);
-                                editor.refresh();
+                               // editor.refresh();
                             } catch (Exception exp) {
                                 exp.printStackTrace();
                             }
