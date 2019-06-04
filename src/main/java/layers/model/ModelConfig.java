@@ -213,4 +213,11 @@ public class ModelConfig implements Serializable {
         output_layers = deleteIOLayer(l, output_layers);
     }
 
+    public Layer layerFromName(String name) {
+        for (Layer layer : layers) {
+            if (layer.getName().equals(name))
+                return layer;
+        }
+        return null;
+    }
 }
