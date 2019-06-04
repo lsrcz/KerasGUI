@@ -12,9 +12,11 @@ import java.util.ArrayList;
 
 import layers.layers.Layer;
 import layers.model.Model;
+import fileio.*;
 
 public class Center extends JPanel {
-
+	final int Time2AddLine=2;
+	final int Time2DeleteLine=3;
 	public Layer layer;
 	public boolean canCreate;
 	public JButton button1, button2, button3;
@@ -27,9 +29,11 @@ public class Center extends JPanel {
 	public int eventNumber=0;
 	public boolean isSelected=false;
 	public MyButton tmpButton=null;
-	public Center(RightBar _rightBar)
+	public SaveObject SO;
+	public Center(RightBar _rightBar, SaveObject _SO)
 	{
 		rightBar = _rightBar;
+		SO = _SO;
 		pnlHead = new JPanel() ;
 		KModel=new Model();
 		button1 = new JButton("Create");
@@ -42,9 +46,7 @@ public class Center extends JPanel {
 		pnlHead.add(button1); pnlHead.add(button2); pnlHead.add(button3);
 		pnlBottom = new JPanel();
 		pnlBottom.setLayout(null);
-		//paintPanel = new MyJScrollPane(pnlBottom, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-		//		ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		//paintPanel.setLayout(null);
+
 		paintPanel = new MyJPanel();
 		paintPanel.setLayout(null);
 		//JLabel score = new JLabel("Your score is:");
@@ -58,30 +60,65 @@ public class Center extends JPanel {
 		setVisible(true);
 	}
 
-	public void addLine(MyButton btn1,MyButton btn2,int eventNumber) {
-			if(eventNumber==2)
-			{
-				if(KModel.config.addEdge(btn1.layer,btn2.layer)==false)
-					return;
+	public void getBack()
+	{
+		ArrayList<MyButton> op = SO.getButton();
+		for(MyButton bt: op)
+		{
+			MyButton newButton = new MyButton(bt.getText(), bt.layer, this, bt.x, bt.y, bt.next);
+			SO.deleButton(bt);
 
-
-				paintPanel.line.add(new LineParameter(btn1,btn2));
-				updateUI();
-			}
-			else if(eventNumber==3){
-				KModel.config.deleteEdge(btn1.layer,btn2.layer);
-				int index=0;
-				for(;index<paintPanel.line.size();index++){
-					if(paintPanel.line.get(index).btn1==btn1&&paintPanel.line.get(index).btn2==btn2)
-					{
-						paintPanel.line.remove(index);
-						break;
+			newButton.setSize(120,60);
+			newButton.setLocation(newButton.x,newButton.y);
+			newButton.addActionListener(new MyActionListener(this));
+			paintPanel.add(newButton);
+			SO.setButton(newButton);
+		}
+		updateUI();
+		op = SO.getButton();
+		for(MyButton bt: op)
+		{
+			for(String Name:bt.next){
+				for(MyButton bt2:op){
+					if(bt2.getText().equals(Name)){
+						paintPanel.line.add(new LineParameter(bt,bt2));
 					}
 				}
-				SwingUtilities.invokeLater(() -> {
-					updateUI();
-				});
 			}
+		}
+		updateUI();
+	}
+
+	public void ModifyLine(MyButton btn1,MyButton btn2,int eventNumber) {
+		if(eventNumber==Time2AddLine)
+		{
+			if(KModel.config.addEdge(btn1.layer,btn2.layer)==false)
+				return;
+			paintPanel.line.add(new LineParameter(btn1,btn2));
+			btn1.addNext(btn2);//???
+			SwingUtilities.invokeLater(() -> {
+				updateUI();
+			});
+		}
+		else if(eventNumber==Time2DeleteLine){
+			deleteLine(btn1,btn2);
+			deleteLine(btn2,btn1);
+			SwingUtilities.invokeLater(() -> {
+				updateUI();
+			});
+		}
+	}
+	public void deleteLine(MyButton btn1,MyButton btn2){
+		KModel.config.deleteEdge(btn1.layer,btn2.layer);
+		int index=0;
+		for(;index<paintPanel.line.size();index++){
+			if(paintPanel.line.get(index).btn1==btn1&&paintPanel.line.get(index).btn2==btn2)
+			{
+				btn1.deleNext(btn2);//???
+				paintPanel.line.remove(index);
+				break;
+			}
+		}
 	}
 	public void toCenter(Layer temp)
 	{
@@ -90,52 +127,7 @@ public class Center extends JPanel {
 		eventNumber=0;
 	}
 }
-/*class MyJScrollPane extends JScrollPane{
-	ArrayList<LineParameter> line=new ArrayList<LineParameter>();
-	public MyJScrollPane(){
-		super();
-	}
-	public MyJScrollPane(Component view, int vsbPolicy, int hsbPolicy)
-	{
-		super(view, vsbPolicy, hsbPolicy);
-	}
-	public void paint(Graphics g) {
-		super.paint(g);
-		int i=0;
-		for(;i<line.size();i++){
-			LineParameter tmpLine=line.get(i);
-			int btn1_x=tmpLine.btn1.getX()+60;
-			int btn1_y=tmpLine.btn1.getY();
-			int btn2_x=tmpLine.btn2.getX()+60;
-			int btn2_y=tmpLine.btn2.getY();
-			int mid_y;
-			boolean flag=true;
-			if(btn2_y>btn1_y+60){
-				btn1_y+=60;
-				mid_y=(btn1_y+btn2_y)/2;
-			}
-			else if(btn2_y<btn1_y-60) {
-				btn2_y+=60;
-				flag=false;
-				mid_y=(btn1_y+btn2_y)/2;
-			}
-			else{
-				mid_y=(btn1_y+btn2_y)/2-60;
-			}
-			g.drawLine(btn1_x,btn1_y,btn1_x,mid_y);
-			g.drawLine(btn1_x,mid_y,btn2_x,mid_y);
-			g.drawLine(btn2_x,mid_y,btn2_x,btn2_y);
-			if(flag){
-			g.drawLine(btn2_x,btn2_y,btn2_x+5,btn2_y-5);
-			g.drawLine(btn2_x,btn2_y,btn2_x-5,btn2_y-5);
-		}
-			else{
-				g.drawLine(btn2_x,btn2_y,btn2_x+5,btn2_y+5);
-				g.drawLine(btn2_x,btn2_y,btn2_x-5,btn2_y+5);
-			}
-		}
-	}
-}*/
+
 class MyJPanel extends JPanel{
 	ArrayList<LineParameter> line=new ArrayList<LineParameter>();
 	int maxY;
@@ -153,63 +145,68 @@ class MyJPanel extends JPanel{
 			int btn1_y=tmpLine.btn1.getY();
 			int btn2_x=tmpLine.btn2.getX()+60;
 			int btn2_y=tmpLine.btn2.getY();
-			int mid_y;
-			boolean flag=true;
-			if(btn2_y>btn1_y+60){
-				btn1_y+=60;
-				mid_y=(btn1_y+btn2_y)/2;
-			}
-			else if(btn2_y<btn1_y-60) {
-				btn2_y+=60;
-				flag=false;
-				mid_y=(btn1_y+btn2_y)/2;
-			}
-			else{
-				mid_y=(btn1_y+btn2_y)/2-60;
-			}
-			g.drawLine(btn1_x,btn1_y,btn1_x,mid_y);
-			g.drawLine(btn1_x,mid_y,btn2_x,mid_y);
-			g.drawLine(btn2_x,mid_y,btn2_x,btn2_y);
-			if(flag){
-				g.drawLine(btn2_x,btn2_y,btn2_x+5,btn2_y-5);
-				g.drawLine(btn2_x,btn2_y,btn2_x-5,btn2_y-5);
-			}
-			else{
-				g.drawLine(btn2_x,btn2_y,btn2_x+5,btn2_y+5);
-				g.drawLine(btn2_x,btn2_y,btn2_x-5,btn2_y+5);
-			}
+			drawLine(g,btn1_x,btn1_y,btn2_x,btn2_y);
+		}
+	}
+	public void drawLine(Graphics g,int x1,int y1,int x2,int y2){
+		int mid_y;
+		boolean flag=true;
+		if(y2>y1+60){
+			y1+=60;
+			mid_y=(y1+y2)/2;
+		}
+		else if(y2<y1-60) {
+			y2+=60;
+			flag=false;
+			mid_y=(y1+y2)/2;
+		}
+		else{
+			mid_y=(y1+y2)/2-60;
+		}
+		g.drawLine(x1,y1,x1,mid_y);
+		g.drawLine(x1,mid_y,x2,mid_y);
+		g.drawLine(x2,mid_y,x2,y2);
+		if(flag){
+			g.drawLine(x2,y2,x2+5,y2-5);
+			g.drawLine(x2,y2,x2-5,y2-5);
+		}
+		else{
+			g.drawLine(x2,y2,x2+5,y2+5);
+			g.drawLine(x2,y2,x2-5,y2+5);
 		}
 	}
 }
 
 class LineParameter {
 
-    public MyButton btn1;
-    public MyButton btn2;
+	public MyButton btn1;
+	public MyButton btn2;
 
-    LineParameter(MyButton from, MyButton to) {
-        btn1 = from;
-        btn2 = to;
-    }
+	LineParameter(MyButton from, MyButton to) {
+		btn1 = from;
+		btn2 = to;
+	}
 
 }
 
 class MyActionListener implements ActionListener {
-    Center center;
+	Center center;
 
-    public MyActionListener(Center _center) {
-        center = _center;
-    }
+	public MyActionListener(Center _center) {
+		center = _center;
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        Object button = e.getSource();
-        if (button == center.button1) {
-            if (center.canCreate) {
+	public void actionPerformed(ActionEvent e) {
+		Object button = e.getSource();
+		if (button == center.button1) {
+			if (center.canCreate) {
 //				System.out.println(dense.getString("name"));
 				MyButton mb =new MyButton(center.layer.getString("name"),center.layer, center);
 				center.KModel.config.addLayer(center.layer);
 				mb.setSize(120, 60);
 				mb.setLocation(500, 40);
+				mb.x = 500;//???
+				mb.y = 40;//???
 				if(center.paintPanel.maxButton == null)
 				{
 					center.paintPanel.maxButton = mb;
@@ -219,6 +216,7 @@ class MyActionListener implements ActionListener {
 				//mb.setVisible(true);
 				mb.addActionListener(new MyActionListener(center));
 				center.paintPanel.add(mb);
+				center.SO.setButton(mb);//???
 				SwingUtilities.invokeLater(() -> {
 					center.updateUI();
 				});
@@ -229,12 +227,12 @@ class MyActionListener implements ActionListener {
 		else if(button==center.button2){
 			center.isSelected=false;
 			center.tmpButton=null;
-			center.eventNumber=2;
+			center.eventNumber=center.Time2AddLine;
 		}
 		else if(button==center.button3){
 			center.isSelected=false;
 			center.tmpButton=null;
-			center.eventNumber=3;
+			center.eventNumber=center.Time2DeleteLine;
 		}
 		else{
 			if(center.eventNumber!=0){
@@ -244,27 +242,13 @@ class MyActionListener implements ActionListener {
 				}
 				else{
 					System.out.println(center.tmpButton.getText());
-					center.addLine(center.tmpButton,(MyButton) button,center.eventNumber);
+					center.ModifyLine(center.tmpButton,(MyButton) button,center.eventNumber);
 					center.tmpButton=null;
 					center.isSelected=false;
 					center.eventNumber=0;
 				}
 			}
 		}
-	}
-}
-class MyButton extends JButton
-{
-	public Layer layer;
-	Center center;
-	public MyButton(String text,Layer _layer, Center _center)
-	{
-		super(text);
-		layer = _layer;
-		center = _center;
-		MouseEventListener mouseListener = new MouseEventListener(this, center);
-		this.addMouseListener(mouseListener);
-		this.addMouseMotionListener(mouseListener);
 	}
 }
 
@@ -300,13 +284,19 @@ class MouseEventListener implements MouseInputListener {
 			while(flag){
 				flag=false;
 				int index=0;
-			for(;index<center.paintPanel.line.size();index++){
-				if(center.paintPanel.line.get(index).btn1==sourceBtn||center.paintPanel.line.get(index).btn2==sourceBtn)
-				{
-					center.paintPanel.line.remove(index);
-					flag=true;
-				}
-			}}
+				for(;index<center.paintPanel.line.size();index++){
+					if(center.paintPanel.line.get(index).btn1==sourceBtn||center.paintPanel.line.get(index).btn2==sourceBtn)
+					{
+						center.paintPanel.line.remove(index);
+						flag=true;
+					}
+				}}
+
+			ArrayList<MyButton> op = center.SO.getButton();
+			for(MyButton bt:op){
+				bt.deleNext(sourceBtn);
+			}
+			center.SO.deleButton(sourceBtn);//???????
 			center.paintPanel.remove(sourceBtn);
 			//center.paintPanel.revalidate();
 			SwingUtilities.invokeLater(() -> {
@@ -355,6 +345,8 @@ class MouseEventListener implements MouseInputListener {
 		int x = p.x + (e.getX() - origin.x);
 		int y = p.y + (e.getY() - origin.y);
 		this.frame.setLocation(x, y);
+		this.frame.x = x;//???
+		this.frame.y = y;//???
 		if(center.paintPanel.maxY < y)
 		{
 			center.paintPanel.maxButton = this.frame;
@@ -370,3 +362,4 @@ class MouseEventListener implements MouseInputListener {
 	public void mouseMoved(MouseEvent e) {}
 
 }
+

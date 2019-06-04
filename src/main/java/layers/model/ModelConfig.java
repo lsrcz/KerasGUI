@@ -14,7 +14,8 @@ import java.util.Set;
 
 public class ModelConfig implements Serializable {
     @Expose
-    private String name = UniqueNameGenerator.getInstance().generate("model", "model");
+    private String name = UniqueNameGenerator
+            .getInstance().generate("model", "model");
     @Expose
     private Layer[] layers;
     @Expose
@@ -37,6 +38,7 @@ public class ModelConfig implements Serializable {
         this.name = name;
     }
 
+    // add an layer
     public void addLayer(Layer obj) {
         for (Layer o : layers) {
             if (o == obj) {
@@ -49,6 +51,7 @@ public class ModelConfig implements Serializable {
         layers = newlayers;
     }
 
+    // delete a layer and all associated edges
     public void deleteLayer(Layer obj) {
         Layer[] newlayers = new Layer[layers.length - 1];
         for (int i = 0; i < layers.length; ++i) {
@@ -81,6 +84,7 @@ public class ModelConfig implements Serializable {
         throw new Error("BUG!!!");
     }
 
+    // check if the model has loop
     private boolean loopFree() {
         Map<Layer, Integer> inDegree = new HashMap<>();
         for (Layer l : layers) {
@@ -92,6 +96,7 @@ public class ModelConfig implements Serializable {
             }
         }
         while (true) {
+            // delete nodes with zero in degree iteratively
             Set<Layer> zeroSet = new HashSet<>();
             for (Layer l : inDegree.keySet()) {
                 if (inDegree.get(l) == 0) {
@@ -119,6 +124,7 @@ public class ModelConfig implements Serializable {
         }
     }
 
+    // add an edge with loop checking
     public boolean addEdge(Layer from, Layer to) {
         if (!edges.containsKey(from))
             edges.put(from, new HashSet<>());
@@ -131,6 +137,7 @@ public class ModelConfig implements Serializable {
         return true;
     }
 
+    // delete an edge
     public void deleteEdge(Layer from, Layer to) {
         if (!edges.containsKey(from))
             return;
@@ -140,6 +147,7 @@ public class ModelConfig implements Serializable {
         updateEdge();
     }
 
+    // update the edge to the model's internal representation
     private void updateEdge() {
         for (Layer layer : layers) {
             layer.clearEdges();
@@ -170,11 +178,12 @@ public class ModelConfig implements Serializable {
         return new_layers;
     }
 
+    // add input layer
     public void addInputLayer(Layer l) {
         input_layers = addIOLayer(l, input_layers);
     }
 
-
+    // add output layer
     public void addOutputLayer(Layer l) {
         output_layers = addIOLayer(l, output_layers);
     }
