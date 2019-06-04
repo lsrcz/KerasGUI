@@ -195,6 +195,21 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    public void setIntegerArray(String name, int[] array) throws NoSuchFieldException {
+        for (Pair<Object, Field> p : getNeedSetSet(name)) {
+            Object obj = p.getKey();
+            Field f = p.getValue();
+            f.setAccessible(true);
+            if (f.getType() != int[].class)
+                throw new IllegalArgumentException("Not int[] type");
+            try {
+                f.set(obj, array);
+            } catch (IllegalAccessException ex) {
+                throw new Error("BUG!!!");
+            }
+        }
+    }
+
     public void setNullableInt(String name, Integer num) throws NoSuchFieldException {
         for (Pair<Object, Field> p : getNeedSetSet(name)) {
             Object obj = p.getKey();
@@ -326,6 +341,10 @@ public abstract class ConfigurableObject implements Serializable {
         return (int) getObject(name, Integer.class, true);
     }
 
+    public int[] getIntegerArray(String name) {
+        return (int[]) getObject(name, int[].class, false);
+    }
+
     public Integer getNullableInteger(String name) {
         return (Integer) getObject(name, Integer.class, false);
     }
@@ -340,6 +359,10 @@ public abstract class ConfigurableObject implements Serializable {
 
     public boolean isIntegerConfig(String name) {
         return getConfigType(name) == int.class;
+    }
+
+    public boolean isIntegerArrayConfig(String name) {
+        return getConfigType(name) == int[].class;
     }
 
     public boolean isNullableIntegerConfig(String name) {
