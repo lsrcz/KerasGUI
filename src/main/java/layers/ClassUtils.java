@@ -7,6 +7,7 @@ import java.util.Collections;
 
 public class ClassUtils {
 
+    // get declared fields with respect to the super classes
     public static ArrayList<Field> getDeclaredFieldsUntilClass(Class<?> cls, Class<?> until, boolean include) {
         ArrayList<Field> ret = new ArrayList<>();
         if (until.isAssignableFrom(cls)) {
@@ -24,6 +25,7 @@ public class ClassUtils {
         }
     }
 
+    // get declared field with respect to the super classes
     public static Field getDeclaredFieldUntilClass(Class<?> cls, Class<?> until, String name, boolean include) throws NoSuchFieldException {
         if (until.isAssignableFrom(cls)) {
             while (true) {
@@ -43,6 +45,7 @@ public class ClassUtils {
         }
     }
 
+    // get declared method with respect to the super classes
     public static Method getDeclaredMethodUntilClass(Class<?> cls, Class<?> until, String name, boolean include) throws NoSuchMethodException {
         if (until.isAssignableFrom(cls)) {
             while (true) {
