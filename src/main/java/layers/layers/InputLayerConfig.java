@@ -5,6 +5,12 @@ import layers.ConfigurableObject;
 import layers.annotation.*;
 
 public class InputLayerConfig extends ConfigurableObject {
+    @LinkedProperty(name = "name")
+    @UniqueProperty(scope = "name", prefix = "input")
+    @ConfigProperty
+    @Expose
+    String name;
+
     @ConfigProperty
     @Expose
     int[] input_shape;
@@ -22,10 +28,4 @@ public class InputLayerConfig extends ConfigurableObject {
     @ConfigProperty
     @Expose
     boolean sparse;
-
-    @LinkedProperty(name = "name")
-    @UniqueProperty(scope = "name", prefix = "input")
-    @ConfigProperty
-    @Expose
-    String name;
 }
