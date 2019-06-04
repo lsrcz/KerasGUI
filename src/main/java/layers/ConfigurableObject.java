@@ -302,6 +302,8 @@ public abstract class ConfigurableObject implements Serializable {
     private Object getObject(String name, Class<?> cls, boolean nonNull) {
         try {
             Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
+            if (!f.isAnnotationPresent(ConfigProperty.class))
+                throw new IllegalAccessException("Not configurable");
             f.setAccessible(true);
             Object got = f.get(this);
             if (nonNull && got == null)
