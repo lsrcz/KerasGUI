@@ -50,6 +50,7 @@ public class GUI extends JFrame {
         menu.add(saveAt);
         menu.add(load);
         editorItem.addActionListener((e) -> {
+            editor.refresh();
             editor.setVisible(true);
         });
         save.addActionListener((e) -> {
