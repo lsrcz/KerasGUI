@@ -20,7 +20,7 @@ public class Editor extends JFrame {
     public JScrollPane scrollPane, modelScrollPane;
     public JMenuBar menuBar;
     public JMenu menu;
-    public JMenuItem saveItem;
+    public JMenuItem refreshItem;
     public JMenuItem runItem;
     public String osName;
     public String objName;
@@ -50,6 +50,7 @@ public class Editor extends JFrame {
         menu = new JMenu("Mean");
         // saveItem = new JMenuItem("保存");
         runItem = new JMenuItem("Run");
+        refreshItem = new JMenuItem("Refresh");
         if (System.getProperty("os.name").indexOf("Windows") != -1) osName = "Windows";
         else osName="Linux";
 //        else if (System.getProperty("os.name").indexOf("Linux") != -1) osName = "Linux";
@@ -200,6 +201,7 @@ public class Editor extends JFrame {
         menuBar.add(menu);
         // menu.add(saveItem);
         menu.add(runItem);
+        menu.add(refreshItem);
         /*
         saveItem.addActionListener(e -> {
             currentFileName =
@@ -216,7 +218,9 @@ public class Editor extends JFrame {
         });
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         */
-
+        refreshItem.addActionListener(e->{
+            refresh();
+        });
         runItem.addActionListener(e -> {
             gui.save();
             String currentFileName = gui.getFileName();
