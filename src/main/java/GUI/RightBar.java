@@ -1,8 +1,12 @@
 package GUI;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import layers.ConfigurableObject;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -248,6 +252,129 @@ public class RightBar extends JPanel {
             });
             temp.add(comboBox);
         }
+        if (obj.isIntegerArrayConfig(str)) {
+            int[] tempIntArray = obj.getIntegerArray(str);
+            JCheckBox checkBox = new JCheckBox();
+            int dimension = 0;
+            SpinnerModel spinnerModel = new SpinnerNumberModel(0, 0, 10, 1);
+            JSpinner spinner = new JSpinner(spinnerModel);
+            if (tempIntArray == null) {
+                checkBox.setSelected(false);
+            } else {
+                checkBox.setSelected(true);
+                spinner.setValue(tempIntArray.length);
+                dimension = tempIntArray.length;
+            }
+            temp.setLayout(new FlowLayout(FlowLayout.LEFT));
+            temp.setPreferredSize(new Dimension(200, (dimension + 1) * 44));
+            System.out.println(dimension);
+            checkBox.addActionListener((e) -> {
+                JCheckBox source = (JCheckBox) e.getSource();
+                if (source.isSelected())
+                    spinner.setEnabled(true);
+                else {
+                    spinner.setEnabled(false);
+                    spinner.setValue(0);
+                    try{
+                        obj.setIntegerArray(str, null);
+                    }catch (NoSuchFieldException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                    rightBar.refresh(rightBar.object);
+                    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
+                    System.out.println(gson.toJson(object));
+                }
+            });
+            spinner.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    int dimension = (Integer) spinner.getValue();
+                    if(dimension != 0)
+                    {
+                        try{
+                            obj.setIntegerArray(str, new int[(Integer) spinner.getValue()]);
+                        }catch (NoSuchFieldException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        try{
+                            obj.setIntegerArray(str, null);
+                        }catch (NoSuchFieldException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+                    rightBar.refresh(rightBar.object);
+                }
+            });
+            JPanel tempPanel = new JPanel();
+            tempPanel.add(checkBox);
+            //spinner.setPreferredSize(new Dimension(150, 30));
+            tempPanel.add(spinner);
+            temp.add(tempPanel);
+            if(dimension != 0)
+            {
+                MyTextField[] textFields = new MyTextField[dimension];
+                for(int i = 0; i < dimension; i++)
+                {
+                    textFields[i] = new MyTextField(i);
+                    tempPanel = new JPanel();
+                    tempPanel.add(textFields[i]);
+                    temp.add(tempPanel);
+                    textFields[i].addFocusListener(new FocusListener() {
+                        @Override
+                        public void focusGained(FocusEvent e) {
+
+                        }
+
+                        @Override
+                        public void focusLost(FocusEvent e) {
+                            MyTextField source = (MyTextField) e.getSource();
+                            try {
+                                Integer.valueOf(source.getText());
+                            } catch (NumberFormatException exp) {
+                                source.setText(String.valueOf(tempIntArray[source.pos]));
+                            }
+                        }
+                    });
+                    textFields[i].getDocument().putProperty("owner", textFields[i]);
+                    textFields[i].setPreferredSize(new Dimension(100,30));
+                    textFields[i].getDocument().addDocumentListener(new DocumentListener() {
+                        @Override
+                        public void insertUpdate(DocumentEvent e) {
+                            MyTextField source = (MyTextField) e.getDocument().getProperty("owner");
+                            int integer;
+                            try {
+                                integer = Integer.valueOf(source.getText());
+                            } catch (NumberFormatException exp) {
+                                return;
+                            }
+                            try {
+                                tempIntArray[source.pos] = integer;
+                                obj.setIntegerArray(str, tempIntArray);
+                            } catch (Exception exp) {
+                                exp.printStackTrace();
+                            }
+                            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
+                            System.out.println(gson.toJson(object));
+                        }
+
+                        @Override
+                        public void removeUpdate(DocumentEvent e) {
+                            insertUpdate(e);
+                        }
+
+                        @Override
+                        public void changedUpdate(DocumentEvent e) {
+                            insertUpdate(e);
+                        }
+                    });
+                }
+            }
+        }
         if (obj.isBooleanConfig(str)) {
             boolean tempBoolean = obj.getBoolean(str);
             String[] tempString = new String[]{"False", "True"};
@@ -399,4 +526,13 @@ public class RightBar extends JPanel {
         return count;
     }
 
+}
+
+class MyTextField extends JTextField{
+    int pos;
+    MyTextField(int pos)
+    {
+        super();
+        this.pos = pos;
+    }
 }
