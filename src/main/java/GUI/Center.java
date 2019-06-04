@@ -1,6 +1,5 @@
 package GUI;
 
-import javax.jws.WebParam;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
@@ -21,7 +20,7 @@ public class Center extends JPanel {
 	//public MyJScrollPane paintPanel;
 	public MyJPanel paintPanel;
 	public JPanel pnlBottom;
-	public Model KModel;
+	public static Model KModel;
 	public JPanel pnlHead;
 	public RightBar rightBar;
 	public int eventNumber=0;

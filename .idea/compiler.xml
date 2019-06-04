@@ -9,5 +9,8 @@
         <module name="KerasGUI" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="KerasGUI" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
