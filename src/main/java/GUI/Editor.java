@@ -24,6 +24,8 @@ public class Editor extends JFrame {
     public JMenuItem saveItem;
     public JMenuItem runItem;
     public String osName;
+    public String objName;
+    public GUI gui;
 
     public String currentFileName;
     public final static String[] keyWord = new String[]{"False", "None", "True", "and", "as", "assert", "break", "class", "continue",
@@ -38,7 +40,9 @@ public class Editor extends JFrame {
             "__import__", "complex", "hasattr", "max", "round", "delattr", "hash", "memoryview", "set"};
 
 
-    public Editor() {
+    public Editor(GUI gui) {
+        this.gui = gui;
+        objName = null;
         textPane = new JTextPane();
         scrollPane = new JScrollPane(textPane);
         modelTextPane = new JTextPane();
@@ -52,6 +56,13 @@ public class Editor extends JFrame {
         else osName = "Mac";
     }
 
+    public void setObjName(String objName)
+    {
+        this.objName = objName;
+    }
+    public String getObjName(){
+        return this.objName;
+    }
     public void refresh(){
         modelTextPane.setText(Center.KModel.dumpJSON());
     }
@@ -198,8 +209,8 @@ public class Editor extends JFrame {
 
         setSize(1280, 960);
         setTitle("python编辑器");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        //setVisible(true);
     }
 
     private void checkStyleMac(JTextPane pane) {
@@ -655,7 +666,7 @@ public class Editor extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             WebLookAndFeel.install();
-            new Editor().init();
+            //new Editor(this).init();
         });
 //        try {
 //            org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();

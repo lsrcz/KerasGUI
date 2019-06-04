@@ -25,11 +25,8 @@ public class LeftBar extends JPanel {
             center.toCenter(temp);
             rightBar.refresh(temp);
         });
-        JButton test = new JButton("test");
-        test.setPreferredSize(new Dimension(150, 30));
         add(dense);
         add(conv1d);
-        add(test);
         setFocusable(true);
     }
 }

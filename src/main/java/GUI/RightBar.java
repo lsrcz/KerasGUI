@@ -14,9 +14,11 @@ public class RightBar extends JPanel {
     final int TRUE = 1;
     final int FALSE = 0;
     ConfigurableObject object;
+    Editor editor;
 
-    RightBar() {
+    RightBar(Editor editor) {
         setLayout(new FlowLayout(FlowLayout.LEFT));
+        this.editor = editor;
         //setSize(250, 720);
         setFocusable(true);
     }
@@ -24,37 +26,7 @@ public class RightBar extends JPanel {
     void refresh(ConfigurableObject object) {
         this.removeAll();
         this.object = object;
-        JPanel temp = new JPanel();
-        temp.setLayout(new FlowLayout());
-        temp.add(new JLabel("Name:"));
-        JTextField textField = new JTextField(object.getString("name"));
-        textField.setPreferredSize(new Dimension(150, 30));
-        textField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                String string = textField.getText();
-                try {
-                    object.setString("name", string);
-                } catch (Exception exp) {
-                    exp.printStackTrace();
-                }
-                //Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
-                //System.out.println(gson.toJson(object));
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                insertUpdate(e);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                insertUpdate(e);
-            }
-        });
-        temp.add(textField);
-        add(temp);
-        int count = getConfig(object.getConfigurableObject("config"), 0) + 1;
+        int count = getConfig(object.getConfigurableObject("config"), 0);
         setPreferredSize(new Dimension(250, count * 42));
         SwingUtilities.invokeLater(() -> {
             updateUI();
@@ -119,6 +91,7 @@ public class RightBar extends JPanel {
                     }
                     try {
                         obj.setNullableInt(str, Integer.valueOf(integer));
+                        editor.refresh();
                     } catch (Exception exp) {
                         exp.printStackTrace();
                     }
@@ -168,6 +141,8 @@ public class RightBar extends JPanel {
                     }
                     try {
                         obj.setInt(str, Integer.valueOf(integer));
+                        editor.refresh();
+
                     } catch (Exception exp) {
                         exp.printStackTrace();
                     }
@@ -216,6 +191,7 @@ public class RightBar extends JPanel {
                     }
                     try {
                         obj.setDouble(str, Double.valueOf(tempDouble));
+                        editor.refresh();
                     } catch (Exception exp) {
                         exp.printStackTrace();
                     }
@@ -258,6 +234,7 @@ public class RightBar extends JPanel {
                         String choice = (String) comboBox.getSelectedItem();
                         try {
                             obj.setString(str, choice);
+                            editor.refresh();
                         } catch (Exception exp) {
                             exp.printStackTrace();
                         }
@@ -286,12 +263,14 @@ public class RightBar extends JPanel {
                         if (choice == TRUE) {
                             try {
                                 obj.setBoolean(str, true);
+                                editor.refresh();
                             } catch (Exception exp) {
                                 exp.printStackTrace();
                             }
                         } else {
                             try {
                                 obj.setBoolean(str, false);
+                                editor.refresh();
                             } catch (Exception exp) {
                                 exp.printStackTrace();
                             }
@@ -338,6 +317,7 @@ public class RightBar extends JPanel {
                             if (comboBox.getSelectedIndex() == nullPosFinal) {
                                 try {
                                     obj.setString(str, "__null__");
+                                    editor.refresh();
                                 } catch (Exception exp) {
                                     exp.printStackTrace();
                                 }
@@ -345,6 +325,7 @@ public class RightBar extends JPanel {
                                 String choice = (String) comboBox.getSelectedItem();
                                 try {
                                     obj.setString(str, choice);
+                                    editor.refresh();
                                 } catch (Exception exp) {
                                     exp.printStackTrace();
                                 }
@@ -359,32 +340,43 @@ public class RightBar extends JPanel {
                 });
                 temp.add(comboBox);
             } else {
-                JTextField textField = new JTextField(tempString);
-                textField.setPreferredSize(new Dimension(150, 30));
-                textField.getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        String string = textField.getText();
-                        try {
-                            obj.setString(str, string);
-                        } catch (Exception exp) {
-                            exp.printStackTrace();
+                if(!str.equals("name"))
+                {
+                    JTextField textField = new JTextField(tempString);
+                    textField.setPreferredSize(new Dimension(150, 30));
+                    textField.getDocument().addDocumentListener(new DocumentListener() {
+                        @Override
+                        public void insertUpdate(DocumentEvent e) {
+                            String string = textField.getText();
+                            try {
+                                obj.setString(str, string);
+                                editor.refresh();
+                            } catch (Exception exp) {
+                                exp.printStackTrace();
+                            }
+                            //Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
+                            //System.out.println(gson.toJson(object));
                         }
-                        //Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
-                        //System.out.println(gson.toJson(object));
-                    }
 
-                    @Override
-                    public void removeUpdate(DocumentEvent e) {
-                        insertUpdate(e);
-                    }
+                        @Override
+                        public void removeUpdate(DocumentEvent e) {
+                            insertUpdate(e);
+                        }
 
-                    @Override
-                    public void changedUpdate(DocumentEvent e) {
-                        insertUpdate(e);
-                    }
-                });
-                temp.add(textField);
+                        @Override
+                        public void changedUpdate(DocumentEvent e) {
+                            insertUpdate(e);
+                        }
+                    });
+                    if(str.equals("name"))
+                        textField.setEnabled(false);
+                    temp.add(textField);
+                }
+                else{
+                    JLabel text = new JLabel(tempString);
+                    text.setPreferredSize(new Dimension(150, 30));
+                    temp.add(text);
+                }
             }
         }
         return temp;
