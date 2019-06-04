@@ -8,19 +8,23 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import fileio.*;
+
 public class GUI extends JFrame {
     JMenuBar menuBar;
     JMenu menu;
     JMenuItem editor;
     JMenuItem save;
+    SaveObject SO;
     GUI()
     {
         super("Keras GUI");
 
         setLayout(new BorderLayout());
+        SO = new SaveObject();
         RightBar rightBar = new RightBar();
         JScrollPane rightScrollPane = new JScrollPane(rightBar);
-        Center center = new Center(rightBar);
+        Center center = new Center(rightBar, SO);
         LeftBar leftBar = new LeftBar(rightBar, center);
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
