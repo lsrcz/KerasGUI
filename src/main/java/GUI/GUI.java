@@ -14,6 +14,7 @@ public class GUI extends JFrame {
     JMenuItem editorItem;
     JMenuItem load;
     JMenuItem save;
+    JMenuItem saveAt;
     SaveObject SO;
     Editor editor;
     Center center;
@@ -34,6 +35,7 @@ public class GUI extends JFrame {
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
         editorItem = new JMenuItem("Open Python Editor");
+        saveAt = new JMenuItem("Save at");
         save = new JMenuItem("Save");
         load = new JMenuItem("Load");
         add("East", rightScrollPane);
@@ -45,6 +47,7 @@ public class GUI extends JFrame {
         menuBar.add(menu);
         menu.add(editorItem);
         menu.add(save);
+        menu.add(saveAt);
         menu.add(load);
         editorItem.addActionListener((e) -> {
             editor.setVisible(true);
@@ -54,6 +57,9 @@ public class GUI extends JFrame {
         });
         load.addActionListener((e) -> {
             load();
+        });
+        saveAt.addActionListener((e) -> {
+            saveNew();
         });
         /*load.addActionListener((e)->{
             JFileChooser fileChooser = new JFileChooser();
@@ -83,6 +89,14 @@ public class GUI extends JFrame {
         });
     }
 
+    public void saveNew() {
+        String newFileName = JOptionPane.showInputDialog("Please input file name:  ");
+        if (newFileName != null) {
+            fileName = newFileName;
+            save();
+        }
+    }
+
     public void save() {
         if (fileName == null) {
             fileName = JOptionPane.showInputDialog("Please input file name： ");
@@ -90,7 +104,7 @@ public class GUI extends JFrame {
         if(fileName == null)
             return;
         try {
-            center.SO.setModel(center.KModel);
+            center.SO.setModel(Center.KModel);
             center.SO.setEditorContents(editor.getTextPane());
             center.SO.setNameGenerator(UniqueNameGenerator.getInstance());
             center.SO.toFile(fileName + ".obj");
@@ -110,7 +124,7 @@ public class GUI extends JFrame {
         }catch (IOException ex){
             ex.printStackTrace();
         }
-        center.KModel = center.SO.getModel();
+        Center.KModel = center.SO.getModel();
         editor.setTextPane(center.SO.getEditorContents());
         UniqueNameGenerator.updateInstance(center.SO.getNameGenerator());
         center.getBack();
