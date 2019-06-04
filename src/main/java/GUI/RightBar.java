@@ -282,6 +282,7 @@ public class RightBar extends JPanel {
                         ex.printStackTrace();
                     }
                     rightBar.refresh(rightBar.object);
+                    //editor.refresh();
                     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
                     System.out.println(gson.toJson(object));
                 }
@@ -297,6 +298,7 @@ public class RightBar extends JPanel {
                         {
                             ex.printStackTrace();
                         }
+                        //editor.refresh();
                     }
                     else
                     {
@@ -312,7 +314,6 @@ public class RightBar extends JPanel {
             });
             JPanel tempPanel = new JPanel();
             tempPanel.add(checkBox);
-            //spinner.setPreferredSize(new Dimension(150, 30));
             tempPanel.add(spinner);
             temp.add(tempPanel);
             if(dimension != 0)
@@ -358,8 +359,9 @@ public class RightBar extends JPanel {
                             } catch (Exception exp) {
                                 exp.printStackTrace();
                             }
-                            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
-                            System.out.println(gson.toJson(object));
+                            editor.refresh();
+                           // Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().serializeNulls().setVersion(1.0).create();
+                           // System.out.println(gson.toJson(object));
                         }
 
                         @Override
