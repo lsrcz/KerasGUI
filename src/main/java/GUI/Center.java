@@ -61,24 +61,24 @@ public class Center extends JPanel {
 
 	public void getBack()
 	{
-		ArrayList<MyButton> op = SO.getButton();
-		for(MyButton bt: op)
+		ArrayList<ButtonAttribute> op = SO.getButton();
+		ArrayList<MyButton> BtArray=new ArrayList<MyButton>();
+		for(ButtonAttribute bt: op)
 		{
-			MyButton newButton = new MyButton(bt.getText(), bt.layer, this, bt.x, bt.y, bt.next);
-			SO.deleButton(bt);
+			MyButton newButton = new MyButton(this,bt);
 
 			newButton.setSize(120,60);
-			newButton.setLocation(newButton.x,newButton.y);
+			newButton.setLocation(newButton.BtA.x,newButton.BtA.y);
 			newButton.addActionListener(new MyActionListener(this));
 			paintPanel.add(newButton);
-			SO.setButton(newButton);
+
 		}
 		updateUI();
 		op = SO.getButton();
-		for(MyButton bt: op)
+		for(MyButton bt: BtArray)
 		{
-			for(String Name:bt.next){
-				for(MyButton bt2:op){
+			for(String Name:bt.BtA.next){
+				for(MyButton bt2:BtArray){
 					if(bt2.getText().equals(Name)){
 						paintPanel.line.add(new LineParameter(bt,bt2));
 					}
@@ -94,7 +94,7 @@ public class Center extends JPanel {
 			if(KModel.config.addEdge(btn1.layer,btn2.layer)==false)
 				return;
 			paintPanel.line.add(new LineParameter(btn1,btn2));
-			btn1.addNext(btn2);//???
+			btn1.BtA.addNext(btn2);//???
 			SwingUtilities.invokeLater(() -> {
 				updateUI();
 			});
@@ -113,7 +113,7 @@ public class Center extends JPanel {
 		for(;index<paintPanel.line.size();index++){
 			if(paintPanel.line.get(index).btn1==btn1&&paintPanel.line.get(index).btn2==btn2)
 			{
-				btn1.deleNext(btn2);//???
+				btn1.BtA.deleNext(btn2);//???
 				paintPanel.line.remove(index);
 				break;
 			}
@@ -204,8 +204,8 @@ class MyActionListener implements ActionListener {
 				center.KModel.config.addLayer(center.layer);
 				mb.setSize(120, 60);
 				mb.setLocation(500, 40);
-				mb.x = 500;//???
-				mb.y = 40;//???
+				mb.BtA.x = 500;//???
+				mb.BtA.y = 40;//???
 				if(center.paintPanel.maxButton == null)
 				{
 					center.paintPanel.maxButton = mb;
@@ -215,7 +215,7 @@ class MyActionListener implements ActionListener {
 				//mb.setVisible(true);
 				mb.addActionListener(new MyActionListener(center));
 				center.paintPanel.add(mb);
-				center.SO.setButton(mb);//???
+				center.SO.setButton(mb.BtA);//???
 				SwingUtilities.invokeLater(() -> {
 					center.updateUI();
 				});
@@ -291,11 +291,11 @@ class MouseEventListener implements MouseInputListener {
 					}
 				}}
 
-			ArrayList<MyButton> op = center.SO.getButton();
-			for(MyButton bt:op){
+			ArrayList<ButtonAttribute> op = center.SO.getButton();
+			for(ButtonAttribute bt:op){
 				bt.deleNext(sourceBtn);
 			}
-			center.SO.deleButton(sourceBtn);//???????
+			center.SO.deleButton(sourceBtn.BtA);//???????
 			center.paintPanel.remove(sourceBtn);
 			//center.paintPanel.revalidate();
 			SwingUtilities.invokeLater(() -> {
@@ -344,8 +344,8 @@ class MouseEventListener implements MouseInputListener {
 		int x = p.x + (e.getX() - origin.x);
 		int y = p.y + (e.getY() - origin.y);
 		this.frame.setLocation(x, y);
-		this.frame.x = x;//???
-		this.frame.y = y;//???
+		this.frame.BtA.x = x;//???
+		this.frame.BtA.y= y;//???
 		if(center.paintPanel.maxY < y)
 		{
 			center.paintPanel.maxButton = this.frame;

@@ -10,47 +10,29 @@ public class MyButton extends JButton
 {
     public Layer layer;
     Center center;
-    public int x, y;
-    public ArrayList<String> next;
+    ButtonAttribute BtA;
     public MyButton(String text,Layer _layer, Center _center)
     {
         super(text);
         layer = _layer;
+        BtA.LayerName=layer.getName();
         center = _center;
         MouseEventListener mouseListener = new MouseEventListener(this, center);
         this.addMouseListener(mouseListener);
         this.addMouseMotionListener(mouseListener);
-        next = new ArrayList<String>();
+        BtA.next = new ArrayList<String>();
     }
 
-    public MyButton(String text,Layer _layer, Center _center, int _x, int _y, ArrayList<String> _next)
+    public MyButton(Center _center,ButtonAttribute _BtA)
     {
-        super(text);
-        layer = _layer;
+        super(_BtA.LayerName);
         center = _center;
         MouseEventListener mouseListener = new MouseEventListener(this, center);
         this.addMouseListener(mouseListener);
         this.addMouseMotionListener(mouseListener);
-        x = _x; y = _y;
-        next = _next;
+        BtA=_BtA;
+        layer=center.KModel.config.layerFromName(BtA.LayerName);
     }
 
-    public void addNext(MyButton _next)
-    {
-        String n_name = _next.getText();
-        next.add(n_name);
-    }
 
-    public void deleNext(MyButton _next)
-    {
-        String n_name = _next.getText();
-        for(int i=0;i<next.size();i++)
-        {
-            if(next.get(i)==n_name)
-            {
-                next.remove(i);
-                break;
-            }
-        }
-    }
 }

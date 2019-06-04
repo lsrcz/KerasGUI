@@ -1,5 +1,6 @@
 package fileio;
 
+import GUI.ButtonAttribute;
 import GUI.MyButton;
 import layers.UniqueNameGenerator;
 import layers.model.Model;
@@ -11,7 +12,7 @@ public class SaveObject implements Serializable {
     private Model model;
     private String editorContents;
     //private MyButton[] button;
-    private ArrayList<MyButton> button;
+    private ArrayList<ButtonAttribute> buttonAtt;
     private UniqueNameGenerator nameGenerator;
 
     public UniqueNameGenerator getNameGenerator() {
@@ -24,7 +25,7 @@ public class SaveObject implements Serializable {
 
     public SaveObject()
     {
-        button = new ArrayList<MyButton>();
+        buttonAtt = new ArrayList<ButtonAttribute>();
     }
 
     public static SaveObject fromFile(String filename) throws IOException {
@@ -48,8 +49,8 @@ public class SaveObject implements Serializable {
 //        return button;
 //    }
 
-    public ArrayList<MyButton> getButton() {
-        return button;
+    public ArrayList<ButtonAttribute> getButton() {
+        return buttonAtt;
     }
 //    public void setButton(MyButton _button) {
 //    	MyButton[] newButton = new MyButton[button.length + 1];
@@ -72,17 +73,17 @@ public class SaveObject implements Serializable {
 //    }
 //
 
-    public void setButton(MyButton _button) {
-        button.add(_button);
+    public void setButton(ButtonAttribute _button) {
+        buttonAtt.add(_button);
     }
 
-    public void deleButton(MyButton _button) {
+    public void deleButton(ButtonAttribute _button) {
 
-        for(int i=0;i<button.size();i++)
+        for(int i=0;i<buttonAtt.size();i++)
         {
-            if(button.get(i)==_button)
+            if(buttonAtt.get(i).equals(_button))
             {
-                button.remove(i);
+                buttonAtt.remove(i);
                 break;
             }
         }
