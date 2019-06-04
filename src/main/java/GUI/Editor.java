@@ -1,7 +1,6 @@
 package GUI;
 
 import com.alee.laf.WebLookAndFeel;
-import layers.model.Model;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -57,16 +56,26 @@ public class Editor extends JFrame {
     }
 
     public void refresh(){
-        modelTextPane.setText(Center.KModel.dumpJSON());
+
+        String head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" +
+                Center.KModel.dumpJSON() + "''')";
+        modelTextPane.setText(head);
+        /*
+        modelTextPane.setText(
+
+                Center.KModel.dumpJSON()
+
+        );*/
     }
 
     public void init() {
 
-        Model model = new Model();
-        System.out.println(model.dumpJSON());
+        // Model model = new Model();
+        // System.out.println(model.dumpJSON());
         setLayout(new BorderLayout());
         add(modelScrollPane, BorderLayout.NORTH);
         modelTextPane.setEditable(false);
+        modelScrollPane.setPreferredSize(new Dimension(0, 400));
         modelTextPane.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -86,9 +95,11 @@ public class Editor extends JFrame {
             public void changedUpdate(DocumentEvent e) {
             }
         });
+        // refresh();
+        /*
         String head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" +
                 model.dumpJSON() + "''')";
-        modelTextPane.setText(head);
+        modelTextPane.setText(head);*/
 
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -199,7 +210,7 @@ public class Editor extends JFrame {
             try {
                 File file = new File(currentFileName + ".py");
                 FileWriter fileWriter = new FileWriter(file.getName());
-                fileWriter.write(modelTextPane.getText() + "\r\n" + textPane.getText());
+                fileWriter.write(modelTextPane.getText() + "\n" + textPane.getText());
                 fileWriter.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
