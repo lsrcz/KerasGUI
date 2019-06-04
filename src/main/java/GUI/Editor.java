@@ -48,9 +48,9 @@ public class Editor extends JFrame {
         modelTextPane = new JTextPane();
         modelScrollPane = new JScrollPane(modelTextPane);
         menuBar = new JMenuBar();
-        menu = new JMenu("菜单");
-        saveItem = new JMenuItem("保存");
-        runItem = new JMenuItem("运行");
+        menu = new JMenu("Mean");
+        // saveItem = new JMenuItem("保存");
+        runItem = new JMenuItem("Run");
         if (System.getProperty("os.name").indexOf("Windows") != -1) osName = "Windows";
         else if (System.getProperty("os.name").indexOf("Linux") != -1) osName = "Linux";
         else osName = "Mac";
@@ -174,7 +174,7 @@ public class Editor extends JFrame {
 
         setJMenuBar(menuBar);
         menuBar.add(menu);
-        menu.add(saveItem);
+        // menu.add(saveItem);
         menu.add(runItem);
         /*
         saveItem.addActionListener(e -> {
