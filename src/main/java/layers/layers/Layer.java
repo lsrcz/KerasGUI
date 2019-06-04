@@ -8,8 +8,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public abstract class Layer extends ConfigurableObject {
-    @Expose
-    public final String class_name = "Dense";
 
     @LinkedProperty(name = "name")
     @Expose
