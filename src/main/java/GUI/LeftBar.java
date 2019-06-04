@@ -1,5 +1,6 @@
 package GUI;
 
+import layers.layers.Add;
 import layers.layers.Conv1D;
 import layers.layers.Dense;
 import layers.layers.InputLayer;
@@ -34,9 +35,18 @@ public class LeftBar extends JPanel {
             center.toCenter(temp);
             rightBar.refresh(temp);
         });
+        JButton addLayer = new JButton("Add");
+        addLayer.setPreferredSize(new Dimension(150, 30));
+        addLayer.addActionListener((e) -> {
+            Add temp = new Add();
+            temp.init();
+            center.toCenter(temp);
+            rightBar.refresh(temp);
+        });
         add(dense);
         add(conv1d);
         add(inputLayer);
+        add(addLayer);
         setFocusable(true);
     }
 }
