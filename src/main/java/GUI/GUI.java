@@ -35,7 +35,7 @@ public class GUI extends JFrame {
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
         editorItem = new JMenuItem("Open Python Editor");
-        saveAt = new JMenuItem("Save at");
+        saveAt = new JMenuItem("Save as");
         save = new JMenuItem("Save");
         load = new JMenuItem("Load");
         add("East", rightScrollPane);
