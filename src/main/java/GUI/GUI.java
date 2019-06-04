@@ -1,17 +1,11 @@
 package GUI;
 
 import com.alee.laf.WebLookAndFeel;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
-import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import fileio.SaveObject;
 
-import fileio.*;
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 
 public class GUI extends JFrame {
     JMenuBar menuBar;
@@ -21,8 +15,10 @@ public class GUI extends JFrame {
     JMenuItem save;
     SaveObject SO;
     Editor editor;
-    GUI()
-    {
+
+    private String fileName = null;
+
+    GUI() {
         super("Keras GUI");
 
         editor = new Editor(this);
@@ -51,7 +47,7 @@ public class GUI extends JFrame {
         editorItem.addActionListener((e) -> {
             editor.setVisible(true);
         });
-        save.addActionListener((e) ->{
+        save.addActionListener((e) -> {
             save();
         });
         /*load.addActionListener((e)->{
@@ -75,7 +71,6 @@ public class GUI extends JFrame {
         setVisible(true);
     }
 
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             WebLookAndFeel.install();
@@ -83,16 +78,18 @@ public class GUI extends JFrame {
         });
     }
 
-    public void save(){
-        String fileName = editor.getObjName();
-        if(fileName == null) {
+    public void save() {
+        if (fileName == null) {
             fileName = JOptionPane.showInputDialog("Please input file name： ");
-            editor.setObjName(fileName);
         }
-            /*try {
-                SO.toFile(fileName + ".obj");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }*/
+        try {
+            SO.toFile(fileName + ".obj");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 }

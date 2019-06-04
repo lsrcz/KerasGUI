@@ -27,7 +27,7 @@ public class Editor extends JFrame {
     public String objName;
     public GUI gui;
 
-    public String currentFileName;
+    // public String currentFileName;
     public final static String[] keyWord = new String[]{"False", "None", "True", "and", "as", "assert", "break", "class", "continue",
             "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is",
             "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"};
@@ -56,13 +56,6 @@ public class Editor extends JFrame {
         else osName = "Mac";
     }
 
-    public void setObjName(String objName)
-    {
-        this.objName = objName;
-    }
-    public String getObjName(){
-        return this.objName;
-    }
     public void refresh(){
         modelTextPane.setText(Center.KModel.dumpJSON());
     }
@@ -183,7 +176,9 @@ public class Editor extends JFrame {
         menuBar.add(menu);
         menu.add(saveItem);
         menu.add(runItem);
+        /*
         saveItem.addActionListener(e -> {
+            currentFileName =
             currentFileName = JOptionPane.showInputDialog("请输入文件名： ");
             try {
                 File file = new File(currentFileName + ".py");
@@ -196,7 +191,11 @@ public class Editor extends JFrame {
             setTitle("python编辑器    " + currentFileName + ".py");
         });
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        */
+
         runItem.addActionListener(e -> {
+            gui.save();
+            String currentFileName = gui.getFileName();
             try {
                 CallPython(currentFileName + ".py");
             } catch (IOException ex) {
