@@ -13,7 +13,9 @@ public class MyButton extends JButton
     ButtonAttribute BtA;
     public MyButton(String text,Layer _layer, Center _center)
     {
+
         super(text);
+        BtA=new ButtonAttribute();
         layer = _layer;
         BtA.LayerName=layer.getName();
         center = _center;

@@ -31,7 +31,7 @@ public class GUI extends JFrame {
         SO = new SaveObject();
         RightBar rightBar = new RightBar(editor);
         JScrollPane rightScrollPane = new JScrollPane(rightBar);
-        Center center = new Center(rightBar, SO);
+        Center center = new Center(rightBar, SO,editor);
         LeftBar leftBar = new LeftBar(rightBar, center);
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");

@@ -1,11 +1,15 @@
 package GUI;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ButtonAttribute {
-    public int x, y;
+public class ButtonAttribute implements Serializable {
+    public int x=0, y=0;
     public ArrayList<String> next;
-    public String LayerName;
+    public String LayerName=null;
+    ButtonAttribute(){
+        ArrayList<String> next=new ArrayList<String>();
+    }
     ButtonAttribute(int _x, int _y, ArrayList<String> _next,String _LayerName){
         x = _x; y = _y;
         next = _next;

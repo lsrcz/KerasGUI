@@ -29,9 +29,11 @@ public class Center extends JPanel {
 	public boolean isSelected=false;
 	public MyButton tmpButton=null;
 	public SaveObject SO;
-	public Center(RightBar _rightBar, SaveObject _SO)
+	public Editor MyEditor;
+	public Center(RightBar _rightBar, SaveObject _SO,Editor _editor)
 	{
 		rightBar = _rightBar;
+		MyEditor=_editor;
 		SO = _SO;
 		pnlHead = new JPanel() ;
 		KModel=new Model();
@@ -106,6 +108,7 @@ public class Center extends JPanel {
 				updateUI();
 			});
 		}
+		MyEditor.refresh();
 	}
 	public void deleteLine(MyButton btn1,MyButton btn2){
 		KModel.config.deleteEdge(btn1.layer,btn2.layer);
@@ -221,6 +224,7 @@ class MyActionListener implements ActionListener {
 				});
 				center.canCreate = false;
 				center.eventNumber=0;
+				center.MyEditor.refresh();
 			}
 		}
 		else if(button==center.button2){
@@ -297,6 +301,7 @@ class MouseEventListener implements MouseInputListener {
 			}
 			center.SO.deleButton(sourceBtn.BtA);//???????
 			center.paintPanel.remove(sourceBtn);
+			center.MyEditor.refresh();
 			//center.paintPanel.revalidate();
 			SwingUtilities.invokeLater(() -> {
 				center.paintPanel.repaint();
