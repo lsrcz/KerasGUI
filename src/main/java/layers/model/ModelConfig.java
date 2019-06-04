@@ -220,4 +220,25 @@ public class ModelConfig implements Serializable {
         }
         return null;
     }
+
+    public void inferInputOutputLayer() {
+        Set<Layer> inputLayers = new HashSet<>();
+        Set<Layer> outputLayers = new HashSet<>();
+        for (Layer l : layers) {
+            inputLayers.add(l);
+            outputLayers.add(l);
+        }
+        for (Layer from : edges.keySet()) {
+            outputLayers.remove(from);
+            for (Layer to : edges.get(from)) {
+                inputLayers.remove(to);
+            }
+        }
+        clearInputLayer();
+        clearOutputLayer();
+        for (Layer l : inputLayers)
+            addInputLayer(l);
+        for (Layer l : outputLayers)
+            addOutputLayer(l);
+    }
 }
