@@ -22,7 +22,7 @@ public class GUI extends JFrame {
     private String fileName = null;
 
     GUI() {
-        super("Keras GUI");
+        super("Keras GUI[Not saved]");
 
         editor = new Editor(this);
         editor.init();
@@ -103,6 +103,7 @@ public class GUI extends JFrame {
         }
         if(fileName == null)
             return;
+        this.setTitle("Keras GUI[" + fileName + "]");
         try {
             center.SO.setModel(Center.KModel);
             center.SO.setEditorContents(editor.getTextPane());
@@ -119,6 +120,7 @@ public class GUI extends JFrame {
             return;
         else
             fileName = tempFileName;
+        this.setTitle("Keras GUI[" + fileName + "]");
         try{
             center.SO = SaveObject.fromFile(fileName + ".obj");
         }catch (IOException ex){
