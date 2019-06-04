@@ -73,7 +73,7 @@ public class Center extends JPanel {
 			newButton.setLocation(newButton.BtA.x,newButton.BtA.y);
 			newButton.addActionListener(new MyActionListener(this));
 			paintPanel.add(newButton);
-
+			BtArray.add(newButton);
 		}
 		updateUI();
 		op = SO.getButton();
