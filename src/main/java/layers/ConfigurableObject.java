@@ -12,6 +12,7 @@ import java.util.Set;
 public abstract class ConfigurableObject implements Serializable {
     ConfigurableObject link;
 
+    // basic initialization with links
     public ConfigurableObject() {
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (!f.isAnnotationPresent(ConfigProperty.class)) {
@@ -56,7 +57,9 @@ public abstract class ConfigurableObject implements Serializable {
         return ClassUtils.getDeclaredMethodUntilClass(cls, ConfigurableObject.class, name, true);
     }
 
+    // initialization, correctly handle links
     public void init() {
+        // recursively init
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (!f.isAnnotationPresent(ConfigProperty.class)) {
                 continue;
@@ -73,10 +76,12 @@ public abstract class ConfigurableObject implements Serializable {
                 throw new Error("BUG!!!");
             }
         }
+
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (!f.isAnnotationPresent(ConfigProperty.class)) {
                 continue;
             }
+            // generate unique names
             if (f.isAnnotationPresent(UniqueProperty.class)) {
                 UniqueProperty annotation = f.getAnnotation(UniqueProperty.class);
                 try {
@@ -88,6 +93,7 @@ public abstract class ConfigurableObject implements Serializable {
                     System.exit(-1);
                 }
             }
+            // apply default strings
             if (f.isAnnotationPresent(DefaultStringProperty.class) &&
                     !ConfigurableObject.class.isAssignableFrom(f.getType())) {
                 DefaultStringProperty annotation = f.getAnnotation(DefaultStringProperty.class);
@@ -101,6 +107,7 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    // get all configurable property
     public ArrayList<String> getConfigureList() {
         ArrayList<String> ret = new ArrayList<>();
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
@@ -111,6 +118,7 @@ public abstract class ConfigurableObject implements Serializable {
         return ret;
     }
 
+    // find all linked property by DFS
     private Set<Pair<Object, Field>> doWalkLinked(String name, Set<Object> walked) {
         walked.add(this);
         Set<Pair<Object, Field>> ret = new HashSet<>();
@@ -141,6 +149,7 @@ public abstract class ConfigurableObject implements Serializable {
         return doWalkLinked(name, walked);
     }
 
+    // return all linked property
     private Set<Pair<Object, Field>> getNeedSetSet(String name) throws NoSuchFieldException {
         Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
         if (!f.isAnnotationPresent(ConfigProperty.class))
@@ -218,6 +227,7 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    // set string or selectable configurable objects
     public void setString(String name, String str) throws NoSuchFieldException, NoSuchMethodException {
         Object newObj = null;
         boolean newObjAssigned = false;
@@ -266,6 +276,7 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    // get all selections for string or selectable configurable objects
     public String[] getSelection(String name) {
         try {
             Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);

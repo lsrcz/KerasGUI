@@ -3,9 +3,11 @@ package layers;
 import java.util.HashMap;
 import java.util.Map;
 
+// generate unique names
 public class UniqueNameGenerator {
     private Map<String, Map<String, Integer>> m;
     private static UniqueNameGenerator instance = new UniqueNameGenerator();
+
     private UniqueNameGenerator() {
         m = new HashMap<>();
     }

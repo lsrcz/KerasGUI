@@ -17,6 +17,7 @@ public class Model implements Serializable {
     @Expose
     public ModelConfig config = new ModelConfig();
 
+    // generate JSON
     public String dumpJSON() {
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()

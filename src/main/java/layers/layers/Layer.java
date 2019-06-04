@@ -23,6 +23,7 @@ public abstract class Layer extends ConfigurableObject {
     }
 
 
+    // for the internal representations
     public void clearEdges() {
         inbound_nodes = new Object[1][][];
         inbound_nodes[0] = new Object[0][];
