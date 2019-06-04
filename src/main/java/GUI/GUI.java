@@ -4,9 +4,8 @@ import com.alee.laf.WebLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import fileio.SaveObject;
 
 public class GUI extends JFrame {
     JMenuBar menuBar;
@@ -41,17 +40,16 @@ public class GUI extends JFrame {
                 public void run() {
                     super.run();
                     SwingUtilities.invokeLater(() -> {
-                        //WebLookAndFeel.install();
                         new Editor().init();
                     });
                 }
             }
             Thread thread = new MyThread();
             thread.start();
-            /*SwingUtilities.invokeLater(() -> {
-                //WebLookAndFeel.install();
-                new Editor().init();
-            });*/
+        });
+        save.addActionListener((e) ->{
+            SaveObject saveObject = new SaveObject();
+
         });
 
         setSize(1280, 720);
