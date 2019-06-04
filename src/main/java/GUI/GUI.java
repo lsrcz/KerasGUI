@@ -12,9 +12,10 @@ import fileio.*;
 public class GUI extends JFrame {
     JMenuBar menuBar;
     JMenu menu;
-    JMenuItem editor;
+    JMenuItem editorItem;
     JMenuItem save;
     SaveObject SO;
+    Editor editor;
     GUI()
     {
         super("Keras GUI");
@@ -27,7 +28,7 @@ public class GUI extends JFrame {
         LeftBar leftBar = new LeftBar(rightBar, center);
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
-        editor = new JMenuItem("Open Python Editor");
+        editorItem = new JMenuItem("Open Python Editor");
         save = new JMenuItem("Save");
         add("East", rightScrollPane);
         add("West", new JScrollPane(leftBar));
@@ -36,20 +37,12 @@ public class GUI extends JFrame {
         rightScrollPane.setPreferredSize(new Dimension(250, 0));
         setJMenuBar(menuBar);
         menuBar.add(menu);
-        menu.add(editor);
+        menu.add(editorItem);
         menu.add(save);
-        editor.addActionListener((e) -> {
-            class MyThread extends Thread{
-                @Override
-                public void run() {
-                    super.run();
-                    SwingUtilities.invokeLater(() -> {
-                        new Editor().init();
-                    });
-                }
-            }
-            Thread thread = new MyThread();
-            thread.start();
+        editor = new Editor();
+        editor.init();
+        editorItem.addActionListener((e) -> {
+            editor.setVisible(true);
         });
         save.addActionListener((e) ->{
             SaveObject saveObject = new SaveObject();

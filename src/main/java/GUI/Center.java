@@ -201,7 +201,7 @@ class MyActionListener implements ActionListener {
 		if (button == center.button1) {
 			if (center.canCreate) {
 //				System.out.println(dense.getString("name"));
-				MyButton mb =new MyButton(center.layer.getString("name"),center.layer, center);
+				MyButton mb =new MyButton(center.layer.getName(),center.layer, center);
 				center.KModel.config.addLayer(center.layer);
 				mb.setSize(120, 60);
 				mb.setLocation(500, 40);
