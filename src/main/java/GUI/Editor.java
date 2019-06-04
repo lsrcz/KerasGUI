@@ -679,18 +679,32 @@ public class Editor extends JFrame {
         Process pr = Runtime.getRuntime().exec(commandStr);
         //Get the result produced by executing the above commands
         BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-        String line = null;
-        String result = "";
-        BufferedWriter out = new BufferedWriter(new FileWriter("wdnmd.txt"));
-        while ((line = in.readLine()) != null) {
-            if (osName.equals("Windows")) result += line + "\r\n";
-            else if (osName.equals("Linux")) result += line + "\n";
-            else result += line + "\r";
-        }
-        System.out.println(result);
-        out.write(result);
+        BufferedReader err = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+        Thread stdout = new Thread(() -> {
+            String line = null;
+            try {
+                while ((line = in.readLine()) != null) {
+                    System.out.println(line);
+                }
+            } catch (IOException ex) {
+            }
+        });
+        stdout.start();
+        Thread stderr = new Thread(() -> {
+            String line = null;
+            try {
+                while ((line = err.readLine()) != null) {
+                    System.err.println(line);
+                }
+            } catch (IOException ex) {
+
+            }
+        });
+        stderr.start();
+        stdout.join();
+        stderr.join();
         in.close();
-        out.close();
+        err.close();
         int endFlag = pr.waitFor();
         if (endFlag == 0) {
             System.out.println("The process ends normally.");
