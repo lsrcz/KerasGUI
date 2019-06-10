@@ -131,9 +131,15 @@ public class Center extends JPanel {
 	}
 }
 
+/**
+ *  This class is designed for the painting part in center.
+ * @author Chun Ning, Hang Zhang, Jiayu Chen
+ */
 class MyJPanel extends JPanel{
 	ArrayList<LineParameter> line=new ArrayList<LineParameter>();
+	// Store the information of the maximum Y value of all buttons
 	int maxY;
+	// Store the button which has the maximum Y value
 	MyButton maxButton;
 	public MyJPanel(){
 		super();
@@ -210,6 +216,10 @@ class MyActionListener implements ActionListener {
 				mb.setLocation(500, 40);
 				mb.BtA.x = 500;//???
 				mb.BtA.y = 40;//???
+				/*
+					Resize the size of the paintPanel if necessary and store the information about maxY
+					and the button whose Y is the maximum.
+				*/
 				if(center.paintPanel.maxButton == null)
 				{
 					center.paintPanel.maxButton = mb;

@@ -8,6 +8,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
+
+/**
+ *  This is core part of the GUI, initalize all part of the gui.
+ * @author Hang Zhang
+ */
 public class GUI extends JFrame {
     JMenuBar menuBar;
     JMenu menu;
@@ -62,20 +67,6 @@ public class GUI extends JFrame {
         saveAt.addActionListener((e) -> {
             saveNew();
         });
-        /*load.addActionListener((e)->{
-            JFileChooser fileChooser = new JFileChooser();
-            FileSystemView fsv = FileSystemView.getFileSystemView();  //注意了，这里重要的一句
-            System.out.println(fsv.getHomeDirectory());                //得到桌面路径
-            fileChooser.setCurrentDirectory(fsv.getHomeDirectory());
-            fileChooser.setDialogTitle("请选择要上传的文件...");
-            fileChooser.setApproveButtonText("确定");
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            result = fileChooser.showOpenDialog(chatFrame);
-            if (JFileChooser.APPROVE_OPTION == result) {
-                path=fileChooser.getSelectedFile().getPath();
-                System.out.println("path: "+path);
-            }
-        });*/
 
         setSize(1280, 720);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -90,6 +81,9 @@ public class GUI extends JFrame {
         });
     }
 
+    /**
+     * Save a new file
+     */
     public void saveNew() {
         String newFileName = JOptionPane.showInputDialog("Please input file name:  ");
         if (newFileName != null) {
@@ -102,9 +96,12 @@ public class GUI extends JFrame {
         if (fileName == null) {
             fileName = JOptionPane.showInputDialog("Please input file name： ");
         }
+        // if cancel
         if(fileName == null)
             return;
+        // update the title
         this.setTitle("Keras GUI[" + fileName + "]");
+        // Save what we need
         try {
             center.SO.setModel(Center.KModel);
             center.SO.setEditorContents(editor.getTextPane());
@@ -117,16 +114,20 @@ public class GUI extends JFrame {
 
     public void load(){
         String tempFileName = JOptionPane.showInputDialog("Please input file name： ");
+        // if cancel
         if (tempFileName == null)
             return;
         else
             fileName = tempFileName;
+        // Update the title
         this.setTitle("Keras GUI[" + fileName + "]");
+        // Get all the information
         try{
             center.SO = SaveObject.fromFile(fileName + ".obj");
         }catch (IOException ex){
             ex.printStackTrace();
         }
+        // Setting what we want
         center.paintPanel.removeAll();
         center.paintPanel.line.clear();
         Center.KModel = center.SO.getModel();
