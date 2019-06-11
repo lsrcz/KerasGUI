@@ -8,11 +8,20 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
+<<<<<<< HEAD
  * This is a class for saving and loading
  * It supplys operations to save and load the graph structure, innner model and related codes 
  * @author Jiayu Chen, Sirui Lu
  */
 
+=======
+ * The save object for restore the project.
+ *
+ * @author Sirui Lu
+ * @author Jiayu Chen
+ * @author Chun Ning
+ */
+>>>>>>> d6a8dbd5c469c5c5cd4a451688da96b4b09aac4e
 public class SaveObject implements Serializable {
     private Model model;
     private String editorContents;
@@ -27,8 +36,7 @@ public class SaveObject implements Serializable {
         this.nameGenerator = nameGenerator;
     }
 
-    public SaveObject()
-    {
+    public SaveObject() {
         buttonAtt = new ArrayList<ButtonAttribute>();
     }
 
@@ -59,10 +67,8 @@ public class SaveObject implements Serializable {
 
     public void deleButton(ButtonAttribute _button) {
 
-        for(int i=0;i<buttonAtt.size();i++)
-        {
-            if(buttonAtt.get(i).equals(_button))
-            {
+        for(int i=0; i<buttonAtt.size(); i++) {
+            if(buttonAtt.get(i).equals(_button)) {
                 buttonAtt.remove(i);
                 break;
             }

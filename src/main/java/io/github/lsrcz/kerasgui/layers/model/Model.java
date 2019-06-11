@@ -7,6 +7,11 @@ import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
 
+/**
+ * Keras model
+ *
+ * @author Sirui Lu
+ */
 public class Model implements Serializable {
     @Expose
     public final String class_name = "Model";
@@ -17,7 +22,10 @@ public class Model implements Serializable {
     @Expose
     public ModelConfig config = new ModelConfig();
 
-    // generate JSON
+    /**
+     * Generate JSON from the object.
+     * @return The JSON in String format
+     */
     public String dumpJSON() {
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
