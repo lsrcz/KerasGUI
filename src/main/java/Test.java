@@ -6,6 +6,7 @@ import layers.layers.Dense;
 import layers.layers.DenseConfig;
 import layers.model.Model;
 
+import java.io.*;
 import java.util.HashMap;
 
 class A {
@@ -101,8 +102,31 @@ public class Test {
         model.config.deleteEdge(d1, d2);
         System.out.println(gson.toJson(model));
 
+
+        model.config.addEdge(d1, d2);
         System.out.println("DUMP:");
         System.out.println(model.dumpJSON());
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream("a");
+            ObjectOutputStream os = new ObjectOutputStream(fileOutputStream);
+            os.writeObject(model);
+            os.close();
+            fileOutputStream.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream("a");
+            ObjectInputStream is = new ObjectInputStream(fileInputStream);
+            Model model1 = (Model)is.readObject();
+            is.close();
+            fileInputStream.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            c.printStackTrace();
+        }
 
 
     }
