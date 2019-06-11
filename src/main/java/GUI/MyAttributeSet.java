@@ -4,6 +4,12 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 
+/**
+ * this attribute set stores different color's attribute set
+ * used in Editor to highlight specific text
+ *
+ * @author Nianqi Liu
+ */
 public enum MyAttributeSet {
 
 

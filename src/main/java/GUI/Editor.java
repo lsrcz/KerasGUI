@@ -13,7 +13,16 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.ArrayList;
 
-
+/**
+ * this editor contains two button and two panel
+ * top panel is uneditable, code in top panel is auto-generated from the graph
+ * bottom panel is editable, user can type their code here and use code in top panel
+ * one button is to run the code, using your system's interpreter
+ * one button is to refresh the code, when user have changed the code
+ * the code in panel is highlighted, and can be auto-completed
+ *
+ * @author Nianqi Liu
+ */
 public class Editor extends JFrame {
 
     public JTextPane textPane, modelTextPane;
@@ -26,7 +35,6 @@ public class Editor extends JFrame {
     public String objName;
     public GUI gui;
 
-    // public String currentFileName;
     public final static String[] keyWord = new String[]{"False", "None", "True", "and", "as", "assert", "break", "class", "continue",
             "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is",
             "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"};
@@ -48,60 +56,54 @@ public class Editor extends JFrame {
         modelScrollPane = new JScrollPane(modelTextPane);
         menuBar = new JMenuBar();
         menu = new JMenu("Mean");
-        // saveItem = new JMenuItem("保存");
         runItem = new JMenuItem("Run");
         refreshItem = new JMenuItem("Refresh");
+        // check the current system Win or Linux
         if (System.getProperty("os.name").indexOf("Windows") != -1) osName = "Windows";
-        else osName="Linux";
-//        else if (System.getProperty("os.name").indexOf("Linux") != -1) osName = "Linux";
-//        else osName = "Mac";
-    }
-
-    public void refresh() {
-        String head;
-        if (osName.equals("Windows"))
-            head = "import tensorflow as tf\r\n" + "model = tf.keras.models.model_from_json('''\r\n" + Center.KModel.dumpJSON() + "''')";
-        else if (osName.equals("Linux"))
-            head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" + Center.KModel.dumpJSON() + "''')";
-        else
-            head = "import tensorflow as tf\r" + "model = tf.keras.models.model_from_json('''\r" + Center.KModel.dumpJSON() + "''')";
-        modelTextPane.setText(head);
-        /*
-        modelTextPane.setText(
-
-                Center.KModel.dumpJSON()
-
-        );*/
-    }
-
-    public String getTextPane() {
-        return textPane.getText();
-    }
-
-    public void setTextPane(String text) {
-        textPane.setText(text);
+        else osName = "Linux";
     }
 
     public void init() {
 
-        // Model model = new Model();
-        // System.out.println(model.dumpJSON());
         setLayout(new BorderLayout());
         add(modelScrollPane, BorderLayout.NORTH);
         modelTextPane.setEditable(false);
         modelScrollPane.setPreferredSize(new Dimension(0, 400));
+
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        add(scrollPane, BorderLayout.CENTER);
+
+        setJMenuBar(menuBar);
+        menuBar.add(menu);
+        menu.add(refreshItem);
+        menu.add(runItem);
+        // add shortcut
+        runItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, ActionEvent.CTRL_MASK));
+
+        addListener();
+        setSize(1280, 960);
+        setTitle("python Editor");
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    }
+
+    /**
+     * add listeners to text panel, run button, refresh button
+     *
+     * @author Nianqi Liu
+     */
+    public void addListener() {
+
         modelTextPane.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 if (osName.equals("Windows")) checkStyleWin(modelTextPane);
-                else if (osName.equals("Mac")) checkStyleMac(modelTextPane);
                 else checkStyleLinux(modelTextPane);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 if (osName.equals("Windows")) checkStyleWin(modelTextPane);
-                else if (osName.equals("Mac")) checkStyleMac(modelTextPane);
                 else checkStyleLinux(modelTextPane);
             }
 
@@ -109,15 +111,7 @@ public class Editor extends JFrame {
             public void changedUpdate(DocumentEvent e) {
             }
         });
-        // refresh();
-        /*
-        String head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" +
-                model.dumpJSON() + "''')";
-        modelTextPane.setText(head);*/
 
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        add(scrollPane, BorderLayout.CENTER);
         textPane.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -132,8 +126,7 @@ public class Editor extends JFrame {
                     }
                 }
                 char inputChar = textPane.getText().charAt(caretPosition);
-//                System.out.println((int)inputChar);
-                if ((inputChar == '\n' && !osName.equals("Mac")) || (inputChar == '\r' && osName.equals("Mac"))) {
+                if (inputChar == '\n') {
                     String[] inputTextSplitedByEnter = inputText.split("[\r\n]+");
                     String lastLine = inputTextSplitedByEnter[inputTextSplitedByEnter.length - 1];
                     int spacesInFrontOfLastLine = countSpacesInFont(lastLine);
@@ -178,49 +171,21 @@ public class Editor extends JFrame {
                 } else {
                 }
                 if (osName.equals("Windows")) checkStyleWin(textPane);
-                else if (osName.equals("Mac")) checkStyleMac(textPane);
                 else checkStyleLinux(textPane);
-//                System.out.println("insert");
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 if (osName.equals("Windows")) checkStyleWin(textPane);
-                else if (osName.equals("Mac")) checkStyleMac(textPane);
                 else checkStyleLinux(textPane);
-//                System.out.println("remove");
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-//                System.out.println("changed");
             }
         });
-
-        setJMenuBar(menuBar);
-        menuBar.add(menu);
-        // menu.add(saveItem);
-        menu.add(runItem);
-        menu.add(refreshItem);
-        /*
-        saveItem.addActionListener(e -> {
-            currentFileName =
-            currentFileName = JOptionPane.showInputDialog("请输入文件名： ");
-            try {
-                File file = new File(currentFileName + ".py");
-                FileWriter fileWriter = new FileWriter(file.getName());
-                fileWriter.write(modelTextPane.getText() + "\n" + textPane.getText());
-                fileWriter.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            setTitle("python编辑器    " + currentFileName + ".py");
-        });
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-        */
-        refreshItem.addActionListener(e->{
-            refresh();
-        });
+        refreshItem.addActionListener(e -> refresh());
+        // run the code in current editor
         runItem.addActionListener(e -> {
             gui.save();
             String currentFileName = gui.getFileName();
@@ -229,10 +194,8 @@ public class Editor extends JFrame {
                 FileWriter fileWriter = new FileWriter(file.getName());
                 if (osName.equals("Windows"))
                     fileWriter.write(modelTextPane.getText() + "\r\n" + textPane.getText());
-                else if (osName.equals("Linux"))
-                    fileWriter.write(modelTextPane.getText() + "\n" + textPane.getText());
                 else
-                    fileWriter.write(modelTextPane.getText() + "\r" + textPane.getText());
+                    fileWriter.write(modelTextPane.getText() + "\n" + textPane.getText());
                 fileWriter.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -245,123 +208,15 @@ public class Editor extends JFrame {
                 ex.printStackTrace();
             }
         });
-        runItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, ActionEvent.CTRL_MASK));
-
-        setSize(1280, 960);
-        setTitle("python编辑器");
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        //setVisible(true);
     }
 
-    private void checkStyleMac(JTextPane pane) {
-        ArrayList<String> keywords = new ArrayList<>();
-        ArrayList<String> builtins = new ArrayList<>();
-        for (String keyword : keyWord) keywords.add(keyword);
-        for (String builtin : builtinFunction) builtins.add(builtin);
-
-        String inputText = pane.getText();
-        for (int i = 0; i < inputText.length(); i++) {
-            // 装饰器橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
-            if (inputText.charAt(i) == '@') {
-                int end, begin = i;
-                for (int j = begin; ; j++) {
-                    if (isSpace(inputText.charAt(j)) || j == inputText.length() - 1) {
-                        end = j;
-                        break;
-                    }
-                }
-                setCharacterAttributes(begin, end - begin + 1,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
-                i = end;
-                continue;
-            } else if (inputText.charAt(i) == '#') {
-                int end, begin = i;
-                for (int j = begin; ; j++) {
-                    if (inputText.charAt(j) == '\r' || j == inputText.length() - 1) {
-                        end = j;
-                        break;
-                    }
-                }
-                setCharacterAttributes(begin, end - begin + 1,
-                        MyAttributeSet.getAttribute(MyAttributeSet.grayAttributeSet), pane);
-                i = end;
-                continue;
-            } else if (isCharacter(inputText.charAt(i))) {
-                int end, begin = i;
-                boolean isKeyWord = false;
-                for (int j = begin; ; j++) {
-                    if (!isCharacter(inputText.charAt(j)) || j == inputText.length() - 1) {
-                        if (!isCharacter(inputText.charAt(j))) {
-                            end = j;
-                        } else {
-                            end = j + 1;
-                        }
-                        break;
-                    }
-                }
-                String word = inputText.substring(begin, end);
-                for (String keyWord : keywords) {
-                    if (word.equals(keyWord)) {
-                        setCharacterAttributes(begin, end - begin,
-                                MyAttributeSet.getAttribute(MyAttributeSet.cyanAttributeSet), pane);
-                        isKeyWord = true;
-                        break;
-                    }
-                }
-                for (String builtin : builtins) {
-                    if (word.equals(builtin)) {
-                        setCharacterAttributes(begin, end - begin,
-                                MyAttributeSet.getAttribute(MyAttributeSet.redAttributeSet), pane);
-                        isKeyWord = true;
-                        break;
-                    }
-                }
-                if (isKeyWord) {
-                    i = end - 1;
-                    continue;
-                }
-                setCharacterAttributes(begin, end - begin,
-                        MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
-                i = end - 1;
-                continue;
-            } else if (isNumber(inputText.charAt(i))) {
-                int begin = i;
-                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.greenAttributeSet), pane);
-
-            } else if (inputText.charAt(i) == '\'' || inputText.charAt(i) == '\"') {
-                int end, begin = i;
-                if ((i - 2) >= 0 && inputText.charAt(i - 1) == '\'' && inputText.charAt(i - 2) == '\'') {
-                    int textBegin = begin;
-                    setCharacterAttributes(textBegin, 1,
-                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
-                    continue;
-                }
-                if (i == inputText.length() - 1) {
-                    setCharacterAttributes(begin, 1,
-                            MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
-                    continue;
-                }
-                for (int j = begin + 1; ; j++) {
-                    if (j == inputText.length() - 1 || inputText.charAt(j) == '\'' || inputText.charAt(j) == '\"') {
-                        if (j == inputText.length() - 1) {
-                            end = j;
-                        } else {
-                            end = j + 1;
-                        }
-                        break;
-                    }
-                }
-                setCharacterAttributes(begin, end - begin,
-                        MyAttributeSet.getAttribute(MyAttributeSet.orangeAttributeSet), pane);
-                i = end - 1;
-                continue;
-            } else {
-                int begin = i;
-                setCharacterAttributes(begin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
-            }
-        }
-    }
-
+    /**
+     * highlight specific text in Linux
+     * decorator-orange, annotation-gray, keyword-cyan, builtin-red,
+     * number-green, string-orange, default-black
+     *
+     * @author Nianqi Liu
+     */
     private void checkStyleLinux(JTextPane pane) {
         ArrayList<String> keywords = new ArrayList<>();
         ArrayList<String> builtins = new ArrayList<>();
@@ -370,7 +225,6 @@ public class Editor extends JFrame {
 
         String inputText = pane.getText();
         for (int i = 0; i < inputText.length(); i++) {
-            // decorator橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
             if (inputText.charAt(i) == '@') {
                 int end, begin = i;
                 for (int j = begin; ; j++) {
@@ -471,6 +325,13 @@ public class Editor extends JFrame {
         }
     }
 
+    /**
+     * highlight specific text in Win
+     * decorator-orange, annotation-gray, keyword-cyan, builtin-red,
+     * number-green, string-orange, default-black
+     *
+     * @author Nianqi Liu
+     */
     private void checkStyleWin(JTextPane pane) {
         ArrayList<String> keywords = new ArrayList<>();
         ArrayList<String> builtins = new ArrayList<>();
@@ -479,7 +340,6 @@ public class Editor extends JFrame {
 
         String inputText = pane.getText();
         for (int i = 0; i < inputText.length(); i++) {
-            // decorator橙色，注释灰色，关键字青色，内置函数红色，数字绿色，字符串橙色，普通字体黑色
             if (inputText.charAt(i) == '@') {
                 int end, begin = i;
                 for (int j = begin; ; j++) {
@@ -637,16 +497,27 @@ public class Editor extends JFrame {
                 }
                 setCharacterAttributes(textBegin, 1, MyAttributeSet.getAttribute(MyAttributeSet.blackAttributeSet), pane);
             } else {
-
+                //TODO
+                //more functions can be added to highlight more different specific text
             }
         }
     }
 
+    /**
+     * change specific text's color
+     *
+     * @author Nianqi Liu
+     */
     private void setCharacterAttributes(int begin, int length, SimpleAttributeSet simpleAttributeSet, JTextPane pane) {
         new Thread(() -> pane.getStyledDocument()
                 .setCharacterAttributes(begin, length, simpleAttributeSet, true)).start();
     }
 
+    /**
+     * check if dentation is needed when you press enter
+     *
+     * @author Nianqi Liu
+     */
     private boolean needIndents(String lastline) {
         String[] words = lastline.split("[^a-zA-Z]+");
         String[] indentWords = new String[]{"while", "if", "for", "def", "with"};
@@ -658,6 +529,80 @@ public class Editor extends JFrame {
             }
         }
         return false;
+    }
+
+    /**
+     * This is the function for using generated code
+     *
+     * @author Nianqi Liu, Chun Ning, Sirui Lu
+     */
+    private void CallPython(String path) throws IOException, InterruptedException {
+
+        // define the command string
+        String[] commandStr;
+        // different interpreter for different system
+        if (osName.equals("Windows")) {
+            commandStr = new String[]{"python", path};
+        } else {
+            commandStr = new String[]{"python3", path};
+        }
+        //Create a Process instance and execute commands
+        Process pr = Runtime.getRuntime().exec(commandStr);
+        //Get the result produced by executing the above commands
+        BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+        BufferedReader err = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+        Thread stdout = new Thread(() -> {
+            String line;
+            try {
+                while ((line = in.readLine()) != null) {
+                    System.out.println(line);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        stdout.start();
+        Thread stderr = new Thread(() -> {
+            String line;
+            try {
+                while ((line = err.readLine()) != null) {
+                    System.err.println(line);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        stderr.start();
+        stdout.join();
+        stderr.join();
+        in.close();
+        err.close();
+        int endFlag = pr.waitFor();
+        if (endFlag == 0) {
+            System.out.println("The process ends normally.");
+        }
+    }
+
+    /**
+     * refresh editor when I change the graph
+     *
+     * @author Nianqi Liu
+     */
+    public void refresh() {
+        String head;
+        if (osName.equals("Windows"))
+            head = "import tensorflow as tf\r\n" + "model = tf.keras.models.model_from_json('''\r\n" + Center.KModel.dumpJSON() + "''')";
+        else
+            head = "import tensorflow as tf\n" + "model = tf.keras.models.model_from_json('''\n" + Center.KModel.dumpJSON() + "''')";
+        modelTextPane.setText(head);
+    }
+
+    public String getTextPane() {
+        return textPane.getText();
+    }
+
+    public void setTextPane(String text) {
+        textPane.setText(text);
     }
 
     private int countChar(String text, char Char) {
@@ -681,55 +626,6 @@ public class Editor extends JFrame {
         }
         return count;
     }
-    /**
-     *  This is the function for using generated code
-     * @author Chun Ning, Sirui Lu
-     */
-    public void CallPython(String path) throws IOException, InterruptedException {
-
-        // define the command string
-//        path = "\"" + path + "\"";
-        String[] commandStr;
-        if (osName.equals("Windows")) {
-            commandStr = new String[]{"python", path};
-        } else {
-            commandStr = new String[]{"python3", path};
-        }
-        //Create a Process instance and execute commands
-        Process pr = Runtime.getRuntime().exec(commandStr);
-        //Get the result produced by executing the above commands
-        BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-        BufferedReader err = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
-        Thread stdout = new Thread(() -> {
-            String line = null;
-            try {
-                while ((line = in.readLine()) != null) {
-                    System.out.println(line);
-                }
-            } catch (IOException ex) {
-            }
-        });
-        stdout.start();
-        Thread stderr = new Thread(() -> {
-            String line = null;
-            try {
-                while ((line = err.readLine()) != null) {
-                    System.err.println(line);
-                }
-            } catch (IOException ex) {
-
-            }
-        });
-        stderr.start();
-        stdout.join();
-        stderr.join();
-        in.close();
-        err.close();
-        int endFlag = pr.waitFor();
-        if (endFlag == 0) {
-            System.out.println("The process ends normally.");
-        }
-    }
 
     private boolean isCharacter(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
@@ -744,17 +640,6 @@ public class Editor extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            WebLookAndFeel.install();
-            //new Editor(this).init();
-        });
-//        try {
-//            org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
-//            UIManager.put("RootPane.setupButtonVisible", false);
-//        } catch (Exception e) {
-//
-//        }
-//        new Editor().init();
-
+        SwingUtilities.invokeLater(WebLookAndFeel::install);
     }
 }
