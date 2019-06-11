@@ -86,7 +86,7 @@ Keras 模型，提供序列化到 JSON 的接口。
 
 Keras 模型配置，提供添加删除层，链接层的接口。
 
-#### `layers.constraint`, `layers.initializer`, `layers.regularizer`
+#### `layers.constraint.*`, `layers.initializer.*`, `layers.regularizer.*`
 
 Keras 内部可配置项。
 
