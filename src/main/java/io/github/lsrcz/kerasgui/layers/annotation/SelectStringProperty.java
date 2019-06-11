@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicate that the String field has choices.
+ * @author Sirui Lu
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

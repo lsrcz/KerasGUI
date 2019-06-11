@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicate that the field should be set by a default string.
+ * @author Sirui Lu
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

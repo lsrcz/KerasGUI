@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Not used currently.
+ * @author Sirui Lu
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

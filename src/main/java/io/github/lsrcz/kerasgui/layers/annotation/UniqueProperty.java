@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicated that the field should be assigned with an unique name.
+ * @author Sirui Lu
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
