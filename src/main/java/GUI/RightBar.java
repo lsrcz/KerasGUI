@@ -55,7 +55,7 @@ public class RightBar extends JPanel {
      * @param depth: the depth in the recursion
      * @return the JPanel containing
      */
-    JPanel getPanel(ConfigurableObject obj, String str, int depth) {
+    private JPanel getPanel(ConfigurableObject obj, String str, int depth) {
         RightBar rightBar = this;
         JPanel temp = new JPanel();
         String name = "";
@@ -539,7 +539,7 @@ public class RightBar extends JPanel {
      * @param depth: the depth of the recursion
      * @return the amount of the attribute
      */
-    int getConfig(ConfigurableObject config, int depth) {
+    private int getConfig(ConfigurableObject config, int depth) {
         ConfigurableObject tempConfig = null;
         int count = 0;
         for (String str : config.getConfigureList()) {
