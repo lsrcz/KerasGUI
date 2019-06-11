@@ -11,7 +11,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * Model config (from keras)
+ *
+ * @author Sirui Lu
+ */
 public class ModelConfig implements Serializable {
     @Expose
     private String name = UniqueNameGenerator
@@ -30,15 +34,26 @@ public class ModelConfig implements Serializable {
         clearOutputLayer();
     }
 
+    /**
+     * Get the name of the model.
+     * @return The name of the model.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set the name of the model.
+     * @param name The new name.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    // add an layer
+    /**
+     * Add an layer to the model.
+     * @param obj The layer object.
+     */
     public void addLayer(Layer obj) {
         for (Layer o : layers) {
             if (o == obj) {
@@ -52,7 +67,10 @@ public class ModelConfig implements Serializable {
         inferInputOutputLayer();
     }
 
-    // delete a layer and all associated edges
+    /**
+     * Delete a layer and all associated edges.
+     * @param obj The layer object.
+     */
     public void deleteLayer(Layer obj) {
         Layer[] newlayers = new Layer[layers.length - 1];
         for (int i = 0; i < layers.length; ++i) {
@@ -86,7 +104,10 @@ public class ModelConfig implements Serializable {
         throw new Error("BUG!!!");
     }
 
-    // check if the model has loop
+    /**
+     * Check if the model has loop.
+     * @return True if the model is loop free.
+     */
     private boolean loopFree() {
         Map<Layer, Integer> inDegree = new HashMap<>();
         for (Layer l : layers) {
@@ -126,7 +147,12 @@ public class ModelConfig implements Serializable {
         }
     }
 
-    // add an edge with loop checking
+    /**
+     * Add an edge with loop checking.
+     * @param from The layer which the edge is from.
+     * @param to The layer which the edge is to.
+     * @return True if the edge is added to the model.
+     */
     public boolean addEdge(Layer from, Layer to) {
         if (!edges.containsKey(from))
             edges.put(from, new HashSet<>());
@@ -141,6 +167,12 @@ public class ModelConfig implements Serializable {
     }
 
     // delete an edge
+
+    /**
+     * Delete an edge.
+     * @param from The layer which the edge is from.
+     * @param to The layer which the edge is to.
+     */
     public void deleteEdge(Layer from, Layer to) {
         if (!edges.containsKey(from))
             return;
@@ -151,7 +183,9 @@ public class ModelConfig implements Serializable {
         updateEdge();
     }
 
-    // update the edge to the model's internal representation
+    /**
+     * Update the edge to the model's internal representation(for keras JSON format).
+     */
     private void updateEdge() {
         for (Layer layer : layers) {
             layer.clearEdges();
@@ -163,10 +197,16 @@ public class ModelConfig implements Serializable {
         }
     }
 
+    /**
+     * Clear input layers.
+     */
     public void clearInputLayer() {
         input_layers = new Object[0][];
     }
 
+    /**
+     * Clear output layers.
+     */
     public void clearOutputLayer() {
         output_layers = new Object[0][];
     }
@@ -182,12 +222,16 @@ public class ModelConfig implements Serializable {
         return new_layers;
     }
 
-    // add input layer
+    /**
+     * Add input layer. Not used.
+     */
     public void addInputLayer(Layer l) {
         input_layers = addIOLayer(l, input_layers);
     }
 
-    // add output layer
+    /**
+     * Add output layer. Not used.
+     */
     public void addOutputLayer(Layer l) {
         output_layers = addIOLayer(l, output_layers);
     }
@@ -209,14 +253,27 @@ public class ModelConfig implements Serializable {
         throw new Error("BUG!!!");
     }
 
+    /**
+     * Delete input layer
+     * @param l the layer to be deleted.
+     */
     public void deleteInputLayer(Layer l) {
         input_layers = deleteIOLayer(l, input_layers);
     }
 
+    /**
+     * Delete output layer
+     * @param l the layer to be deleted.
+     */
     public void deleteOutputLayer(Layer l) {
         output_layers = deleteIOLayer(l, output_layers);
     }
 
+    /**
+     * Get the layer by name.
+     * @param name The name of the layer.
+     * @return The layer object. Null if not found.
+     */
     public Layer layerFromName(String name) {
         for (Layer layer : layers) {
             if (layer.getName().equals(name))
@@ -225,6 +282,9 @@ public class ModelConfig implements Serializable {
         return null;
     }
 
+    /**
+     * Automatically infer the input and output layers.
+     */
     public void inferInputOutputLayer() {
         Set<Layer> inputLayers = new HashSet<>();
         Set<Layer> outputLayers = new HashSet<>();

@@ -7,6 +7,11 @@ import io.github.lsrcz.kerasgui.layers.annotation.LinkedProperty;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+/**
+ * Layer class(Keras object)
+ *
+ * @author Sirui Lu
+ */
 public abstract class Layer extends ConfigurableObject {
 
     @LinkedProperty(name = "name")
@@ -21,12 +26,18 @@ public abstract class Layer extends ConfigurableObject {
     }
 
 
-    // for the internal representations
+    /**
+     * Clear the edges in the internal representations.
+     */
     public void clearEdges() {
         inbound_nodes = new Object[1][][];
         inbound_nodes[0] = new Object[0][];
     }
 
+    /**
+     * Add an in edge to the internal representations.
+     * @param str The name of the edge.
+     */
     public void addInEdge(String str) {
         Object[][] new_inbound_nodes = new Object[inbound_nodes[0].length + 1][];
         System.arraycopy(inbound_nodes[0], 0, new_inbound_nodes, 0, inbound_nodes[0].length);
@@ -39,6 +50,10 @@ public abstract class Layer extends ConfigurableObject {
         inbound_nodes[0] = new_inbound_nodes;
     }
 
+    /**
+     * Get the name of the layer.
+     * @return The name of the layer.
+     */
     public String getName() {
         try {
             Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), "name");

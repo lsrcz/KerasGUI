@@ -9,10 +9,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The class is the base class for all configurable keras objects.
+ *
+ * @author Sirui Lu
+ */
 public abstract class ConfigurableObject implements Serializable {
     ConfigurableObject link;
 
-    // basic initialization with links
+    /**
+     * Basic initialization of configurable objects, should be used with init().
+     * @see ConfigurableObject#init()
+     */
     public ConfigurableObject() {
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
             if (!f.isAnnotationPresent(ConfigProperty.class)) {
@@ -57,7 +65,10 @@ public abstract class ConfigurableObject implements Serializable {
         return ClassUtils.getDeclaredMethodUntilClass(cls, ConfigurableObject.class, name, true);
     }
 
-    // initialization, correctly handle links
+    /**
+     * Initialization, correctly handle links.
+     * @see ConfigurableObject#ConfigurableObject()
+     */
     public void init() {
         // recursively init
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
@@ -107,7 +118,10 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
-    // get all configurable property
+    /**
+     * Get all configurable property.
+     * @return An ArrayList of the name of all the configurable properties.
+     */
     public ArrayList<String> getConfigureList() {
         ArrayList<String> ret = new ArrayList<>();
         for (Field f : getDeclaredFieldsUntilConfigurableObject(this.getClass())) {
@@ -118,7 +132,12 @@ public abstract class ConfigurableObject implements Serializable {
         return ret;
     }
 
-    // find all linked property by DFS
+    /**
+     * Find all linked property by DFS.
+     * @param name The name of the field.
+     * @param walked An helper set for the algorithm.
+     * @return An Set of the object-field pairs.
+     */
     private Set<Pair<Object, Field>> doWalkLinked(String name, Set<Object> walked) {
         walked.add(this);
         Set<Pair<Object, Field>> ret = new HashSet<>();
@@ -149,7 +168,13 @@ public abstract class ConfigurableObject implements Serializable {
         return doWalkLinked(name, walked);
     }
 
-    // return all linked property
+    /**
+     * Return all the fields that are needed to be set in a single assign operation.
+     * @param name The name of the field.
+     * @return An Set of the object-field pairs for all the fields that are needed to be set.
+     * @throws NoSuchFieldException If the name is not corresponded to a configurable property.
+     * @see NoSuchFieldException
+     */
     private Set<Pair<Object, Field>> getNeedSetSet(String name) throws NoSuchFieldException {
         Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
         if (!f.isAnnotationPresent(ConfigProperty.class))
@@ -163,6 +188,13 @@ public abstract class ConfigurableObject implements Serializable {
         return needSet;
     }
 
+    /**
+     * Set an integer field.
+     * @param name The name of the field.
+     * @param num The value to be set.
+     * @throws NoSuchFieldException If the name is not corresponded to a configurable property.
+     * @see NoSuchFieldException
+     */
     public void setInt(String name, int num) throws NoSuchFieldException {
         for (Pair<Object, Field> p : getNeedSetSet(name)) {
             Object obj = p.getKey();
@@ -179,6 +211,13 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    /**
+     * Set an boolean field.
+     * @param name The name of the field.
+     * @param choice The value to be set.
+     * @throws NoSuchFieldException If the name is not corresponded to a configurable property.
+     * @see NoSuchFieldException
+     */
     public void setBoolean(String name, boolean choice) throws NoSuchFieldException {
         for (Pair<Object, Field> p : getNeedSetSet(name)) {
             Object obj = p.getKey();
@@ -195,6 +234,13 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    /**
+     * Set an integer array field.
+     * @param name The name of the field.
+     * @param array The value to be set.
+     * @throws NoSuchFieldException If the name is not corresponded to a configurable property.
+     * @see NoSuchFieldException
+     */
     public void setIntegerArray(String name, int[] array) throws NoSuchFieldException {
         for (Pair<Object, Field> p : getNeedSetSet(name)) {
             Object obj = p.getKey();
@@ -210,6 +256,13 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    /**
+     * Set an Integer(nullable) field.
+     * @param name The name of the field.
+     * @param num The value to be set.
+     * @throws NoSuchFieldException If the name is not corresponded to a configurable property.
+     * @see NoSuchFieldException
+     */
     public void setNullableInt(String name, Integer num) throws NoSuchFieldException {
         for (Pair<Object, Field> p : getNeedSetSet(name)) {
             Object obj = p.getKey();
@@ -226,6 +279,13 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    /**
+     * Set an double field.
+     * @param name The name of the field.
+     * @param num The value to be set.
+     * @throws NoSuchFieldException If the name is not corresponded to a configurable property.
+     * @see NoSuchFieldException
+     */
     public void setDouble(String name, double num) throws NoSuchFieldException {
         for (Pair<Object, Field> p : getNeedSetSet(name)) {
             Object obj = p.getKey();
@@ -242,7 +302,15 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
-    // set string or selectable configurable objects
+    /**
+     * Set an String/ConfigurableObject with selection field.
+     * @param name The name of the field.
+     * @param str The value to be set.
+     * @throws NoSuchFieldException If the name is not corresponded to a configurable property.
+     * @throws NoSuchMethodException If the name is not corresponded to a configurable String and the type don't have an select(String) method.
+     * @see NoSuchFieldException
+     * @see NoSuchMethodException
+     */
     public void setString(String name, String str) throws NoSuchFieldException, NoSuchMethodException {
         Object newObj = null;
         boolean newObjAssigned = false;
@@ -291,7 +359,11 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
-    // get all selections for string or selectable configurable objects
+    /**
+     * Get all selections for string or selectable configurable objects.
+     * @param name The name of the field.
+     * @return The selections.
+     */
     public String[] getSelection(String name) {
         try {
             Field f = getDeclaredFieldUntilConfigurableObject(this.getClass(), name);
@@ -329,58 +401,128 @@ public abstract class ConfigurableObject implements Serializable {
         }
     }
 
+    /**
+     * Get an ConfigurableObject.
+     * @param name The name of the field.
+     * @return The object.
+     */
     public ConfigurableObject getConfigurableObject(String name) {
         return (ConfigurableObject) getObject(name, ConfigurableObject.class, false);
     }
 
+    /**
+     * Get an String.
+     * @param name The name of the field.
+     * @return The object.
+     */
     public String getString(String name) {
         return (String) getObject(name, String.class, false);
     }
 
+    /**
+     * Get an int.
+     * @param name The name of the field.
+     * @return The object.
+     */
     public int getInteger(String name) {
         return (int) getObject(name, Integer.class, true);
     }
 
+    /**
+     * Get an int array.
+     * @param name The name of the field.
+     * @return The object.
+     */
     public int[] getIntegerArray(String name) {
         return (int[]) getObject(name, int[].class, false);
     }
 
+    /**
+     * Get an Integer(nullable).
+     * @param name The name of the field.
+     * @return The object.
+     */
     public Integer getNullableInteger(String name) {
         return (Integer) getObject(name, Integer.class, false);
     }
 
+    /**
+     * Get an double.
+     * @param name The name of the field.
+     * @return The object.
+     */
     public double getDouble(String name) {
         return (double) getObject(name, Double.class, true);
     }
 
+    /**
+     * Get an boolean.
+     * @param name The name of the field.
+     * @return The object.
+     */
     public boolean getBoolean(String name) {
         return (boolean) getObject(name, Boolean.class, true);
     }
 
+    /**
+     * Decide if the name is corresponded to an int property.
+     * @param name The name of the field.
+     * @return True if the name is corresponded to an int property.
+     */
     public boolean isIntegerConfig(String name) {
         return getConfigType(name) == int.class;
     }
 
+    /**
+     * Decide if the name is corresponded to an int[] property.
+     * @param name The name of the field.
+     * @return True if the name is corresponded to an int[] property.
+     */
     public boolean isIntegerArrayConfig(String name) {
         return getConfigType(name) == int[].class;
     }
 
+    /**
+     * Decide if the name is corresponded to an Integer property.
+     * @param name The name of the field.
+     * @return True if the name is corresponded to an Integer property.
+     */
     public boolean isNullableIntegerConfig(String name) {
         return getConfigType(name) == Integer.class;
     }
 
+    /**
+     * Decide if the name is corresponded to an double property.
+     * @param name The name of the field.
+     * @return True if the name is corresponded to an double property.
+     */
     public boolean isDoubleConfig(String name) {
         return getConfigType(name) == double.class;
     }
 
+    /**
+     * Decide if the name is corresponded to an String property.
+     * @param name The name of the field.
+     * @return True if the name is corresponded to an String property.
+     */
     public boolean isStringConfig(String name) {
         return getConfigType(name) == String.class;
     }
 
+    /**
+     * Decide if the name is corresponded to an boolean property.
+     * @param name The name of the field.
+     * @return True if the name is corresponded to an boolean property.
+     */
     public boolean isBooleanConfig(String name) {
         return getConfigType(name) == boolean.class;
     }
 
+    /**
+     * Decide if the name is corresponded to an ConfigurableObjectConfig property.
+     * @param name The name of the field.
+     * @return True if the name is corresponded to an ConfigurableObjectConfig property.
+     */
     public boolean isConfigurableObjectConfig(String name) {
         Class<?> t = getConfigType(name);
         if (t != null) {
