@@ -12,7 +12,10 @@ import java.util.ArrayList;
 import layers.layers.Layer;
 import layers.model.Model;
 import fileio.*;
-
+/**
+ *  This is the center of the GUI, providing several operation
+ * @author Chun Ning and Jiayu Chen
+ */
 public class Center extends JPanel {
 	final int Time2AddLine=2;
 	final int Time2DeleteLine=3;
@@ -60,7 +63,10 @@ public class Center extends JPanel {
 		setFocusable(true);
 		setVisible(true);
 	}
-
+	/**
+	 * This function is used for loading an archive file
+	 * @author Chun Ning
+	 */
 	public void getBack()
 	{
 		ArrayList<ButtonAttribute> op = SO.getButton();
@@ -90,14 +96,17 @@ public class Center extends JPanel {
 		updateUI();
 
 	}
-
+	/**
+	 *  This is the function for Addline and DeleteLine
+	 * @author Chun Ning
+	 */
 	public void ModifyLine(MyButton btn1,MyButton btn2,int eventNumber) {
 		if(eventNumber==Time2AddLine)
 		{
 			if(KModel.config.addEdge(btn1.layer,btn2.layer)==false)
 				return;
 			paintPanel.line.add(new LineParameter(btn1,btn2));
-			btn1.BtA.addNext(btn2);//???
+			btn1.BtA.addNext(btn2);
 			SwingUtilities.invokeLater(() -> {
 				updateUI();
 			});
@@ -117,7 +126,7 @@ public class Center extends JPanel {
 		for(;index<paintPanel.line.size();index++){
 			if(paintPanel.line.get(index).btn1==btn1&&paintPanel.line.get(index).btn2==btn2)
 			{
-				btn1.BtA.deleNext(btn2);//???
+				btn1.BtA.deleNext(btn2);
 				paintPanel.line.remove(index);
 				break;
 			}
@@ -185,7 +194,10 @@ class MyJPanel extends JPanel{
 		}
 	}
 }
-
+/**
+ *  This class is used for storage line parameter
+ * @author Chun Ning
+ */
 class LineParameter {
 
 	public MyButton btn1;
@@ -197,7 +209,10 @@ class LineParameter {
 	}
 
 }
-
+/**
+ *  This is the class for response the button
+ * @author Jiayu Chen, Chun Ning
+ */
 class MyActionListener implements ActionListener {
 	Center center;
 
@@ -214,8 +229,8 @@ class MyActionListener implements ActionListener {
 				center.KModel.config.addLayer(center.layer);
 				mb.setSize(120, 60);
 				mb.setLocation(500, 40);
-				mb.BtA.x = 500;//???
-				mb.BtA.y = 40;//???
+				mb.BtA.x = 500;
+				mb.BtA.y = 40;
 				/*
 					Resize the size of the paintPanel if necessary and store the information about maxY
 					and the button whose Y is the maximum.
@@ -229,13 +244,13 @@ class MyActionListener implements ActionListener {
 				//mb.setVisible(true);
 				mb.addActionListener(new MyActionListener(center));
 				center.paintPanel.add(mb);
-				center.SO.setButton(mb.BtA);//???
+				center.SO.setButton(mb.BtA);
 				SwingUtilities.invokeLater(() -> {
 					center.updateUI();
 				});
 				center.canCreate = false;
 				center.eventNumber=0;
-				//center.MyEditor.refresh();
+
 			}
 		}
 		else if(button==center.button2){
@@ -268,7 +283,7 @@ class MyActionListener implements ActionListener {
 
 class MouseEventListener implements MouseInputListener {
 	Point origin;
-	//锟斤拷锟斤拷锟阶э拷锟揭拷贫锟斤拷锟侥匡拷锟斤拷锟斤拷
+
 	MyButton frame;
 
 	Center center;
@@ -351,8 +366,6 @@ class MouseEventListener implements MouseInputListener {
 	}
 
 
-	//锟斤拷锟斤拷诒锟斤拷锟斤拷锟斤拷锟阶憋拷锟斤拷锟斤拷么锟斤拷诘锟斤拷锟斤拷锟轿伙拷锟�
-	//锟斤拷锟斤拷锟铰碉拷锟斤拷锟斤拷位锟斤拷  = 锟狡讹拷前锟斤拷锟斤拷位锟斤拷+锟斤拷锟斤拷锟街革拷氲鼻帮拷锟斤拷锟�-锟斤拷臧达拷锟绞敝革拷锟斤拷位锟矫ｏ拷
 
 	@Override
 	public void mouseDragged(MouseEvent e) {

@@ -681,7 +681,10 @@ public class Editor extends JFrame {
         }
         return count;
     }
-
+    /**
+     *  This is the function for using generated code
+     * @author Chun Ning, Sirui Lu
+     */
     public void CallPython(String path) throws IOException, InterruptedException {
 
         // define the command string
