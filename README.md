@@ -208,7 +208,7 @@ public class AddConfig extends ConfigurableObject {
 
 同时我们只实现了 Keras 的约束(constraint)，初始化器(initializer)和正则化器(regularizer)，如果需要增加其他的 Keras 可配置对象，只需要：
 
-1. 提供一个 `BaseSomeObject` 类继承自 `ConfigurableObject` 类，提供 `getSelections()` 和 `select(String)` 方法，`getSelections()` 返回所有选项的字符串形式，`select`根据字符串创建对象。
+1. 提供一个 `BaseSomeObject` 类继承自 `ConfigurableObject` 类，该类不应当有任何非静态域，提供 `String getSelections()` 和 `BaseSomeObject select(String)` 静态方法，`getSelections()` 返回所有选项的字符串形式，`select`根据字符串创建对象。
 2. 对于具体的 `SomeObject`，使之继承自 `BaseSomeObject` 类。
 
 例：
