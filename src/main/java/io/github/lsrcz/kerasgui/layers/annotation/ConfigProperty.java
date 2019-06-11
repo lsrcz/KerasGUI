@@ -5,6 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicate that the field should be shown in the configure panel.
+ * @author Sirui Lu
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigProperty {

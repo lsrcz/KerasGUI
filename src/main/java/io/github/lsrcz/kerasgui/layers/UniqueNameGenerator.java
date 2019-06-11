@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-// generate unique names
+/**
+ * Util class for generate unique names.
+ *
+ * @author Sirui Lu
+ */
 public class UniqueNameGenerator implements Serializable {
     private Map<String, Map<String, Integer>> m;
     private static UniqueNameGenerator instance = new UniqueNameGenerator();
@@ -13,10 +17,31 @@ public class UniqueNameGenerator implements Serializable {
         m = new HashMap<>();
     }
 
+    /**
+     * Get singleton instance.
+     * @return The instance.
+     */
     public static UniqueNameGenerator getInstance() {
         return instance;
     }
 
+    /**
+     * Util used in the saving and loading.
+     *
+     * @param instance The replacement.
+     */
+    public static void updateInstance(UniqueNameGenerator instance) {
+        if (instance == null)
+            throw new IllegalArgumentException("Don't save null");
+        UniqueNameGenerator.instance = instance;
+    }
+
+    /**
+     * Generate a name.
+     * @param scope The scope for unique names.
+     * @param name The name prefix.
+     * @return An unique name.
+     */
     public String generate(String scope, String name) {
         if (!m.containsKey(scope)) {
             m.put(scope, new HashMap<>());
@@ -29,11 +54,5 @@ public class UniqueNameGenerator implements Serializable {
         String ret = name + '_' + num;
         scopeMap.put(name, num + 1);
         return ret;
-    }
-
-    public static void updateInstance(UniqueNameGenerator instance) {
-        if (instance == null)
-            throw new IllegalArgumentException("Don't save null");
-        UniqueNameGenerator.instance = instance;
     }
 }
