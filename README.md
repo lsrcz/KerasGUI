@@ -17,7 +17,7 @@ Keras 是构建在 tensorflow 上的高级神经网络 API，具有用户友好�
 
 ## 系统设计
 
-### 如何在 Java 中表示 Keras 模型？
+### 如何在 Java 中表示 Keras 模型
 
 Keras 提供了方便的模型序列化与反序列化接口，支持将模型序列化到 JSON 或 YAML 格式。在调研了已有的库后，我们选择了 JSON 格式进行代码生成。
 
