@@ -7,10 +7,15 @@ import io.github.lsrcz.kerasgui.layers.model.Model;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * This is a class for saving and loading
+ * It supplys operations to save and load the graph structure, innner model and related codes 
+ * @author Jiayu Chen, Sirui Lu
+ */
+
 public class SaveObject implements Serializable {
     private Model model;
     private String editorContents;
-    //private MyButton[] button;
     private ArrayList<ButtonAttribute> buttonAtt;
     private UniqueNameGenerator nameGenerator;
 
@@ -44,33 +49,9 @@ public class SaveObject implements Serializable {
         this.model = model;
     }
 
-//    public MyButton[] getButton() {
-//        return button;
-//    }
-
     public ArrayList<ButtonAttribute> getButton() {
         return buttonAtt;
     }
-//    public void setButton(MyButton _button) {
-//    	MyButton[] newButton = new MyButton[button.length + 1];
-//        System.arraycopy(button, 0, newButton, 0, button.length);
-//        newButton[button.length] = _button;
-//        button = newButton;
-//    }
-//
-//    public void deleButton(MyButton _button) {
-//    	MyButton[] newButton = new MyButton[button.length - 1];
-//        for (int i = 0; i < button.length; ++i) {
-//            if (newButton[i] == _button) {
-//                if (i != 0)
-//                    System.arraycopy(button, 0, newButton, 0, i);
-//                if (i != button.length - 1)
-//                    System.arraycopy(button, i + 1, newButton, i, button.length - 1 - i);
-//                button = newButton;
-//            }
-//        }
-//    }
-//
 
     public void setButton(ButtonAttribute _button) {
         buttonAtt.add(_button);

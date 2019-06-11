@@ -3,6 +3,13 @@ package io.github.lsrcz.kerasgui.gui;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ *  This is the button class, which represents the layers in our network
+ *  It stores its location, name and next layers
+ *  The operations mainly includes add and delete its next layers
+ * @author Jiayu Chen
+ */
+
 public class ButtonAttribute implements Serializable {
     public int x=0, y=0;
     public ArrayList<String> next;

@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 /**
  *  This is the center of the GUI, providing several operation
- * @author Chun Ning and Jiayu Chen
+ * @author Chun Ning, Jiayu Chen
  */
 public class Center extends JPanel {
 	final int Time2AddLine=2;
@@ -21,7 +21,6 @@ public class Center extends JPanel {
 	public Layer layer;
 	public boolean canCreate;
 	public JButton button1, button2, button3;
-	//public MyJScrollPane paintPanel;
 	public MyJPanel paintPanel;
 	public JPanel pnlBottom;
 	public static Model KModel;
@@ -52,19 +51,16 @@ public class Center extends JPanel {
 
 		paintPanel = new MyJPanel();
 		paintPanel.setLayout(null);
-		//JLabel score = new JLabel("Your score is:");
 		setBorder(BorderFactory.createEtchedBorder());
-		//add(score);
 		setLayout(new BorderLayout());
 		add("North", pnlHead);
 		add("Center", new JScrollPane(paintPanel));
-		//add("Center", paintPanel);
 		setFocusable(true);
 		setVisible(true);
 	}
 	/**
 	 * This function is used for loading an archive file
-	 * @author Chun Ning
+	 * @author Chun Ning, Jiayu Chen
 	 */
 	public void getBack()
 	{
@@ -117,7 +113,6 @@ public class Center extends JPanel {
 				updateUI();
 			});
 		}
-		//MyEditor.refresh();
 	}
 	public void deleteLine(MyButton btn1,MyButton btn2){
 		KModel.config.deleteEdge(btn1.layer,btn2.layer);
@@ -223,7 +218,6 @@ class MyActionListener implements ActionListener {
 		Object button = e.getSource();
 		if (button == center.button1) {
 			if (center.canCreate) {
-//				System.out.println(dense.getString("name"));
 				MyButton mb =new MyButton(center.layer.getName(),center.layer, center);
                 Center.KModel.config.addLayer(center.layer);
 				mb.setSize(120, 60);
@@ -240,7 +234,6 @@ class MyActionListener implements ActionListener {
 					center.paintPanel.maxY = 40;
 					center.paintPanel.setPreferredSize(new Dimension(0,140));
 				}
-				//mb.setVisible(true);
 				mb.addActionListener(new MyActionListener(center));
 				center.paintPanel.add(mb);
 				center.SO.setButton(mb.BtA);
@@ -280,19 +273,23 @@ class MyActionListener implements ActionListener {
 	}
 }
 
+/**
+ *  This is the class for response the mouse action
+ *  Mainly including the mouse-click and mouse-drag event
+ * @author Jiayu Chen, Chun Ning
+ */
+
 class MouseEventListener implements MouseInputListener {
 	Point origin;
-
 	MyButton frame;
-
 	Center center;
-
+	
 	public MouseEventListener(MyButton frame, Center _center) {
 		this.frame = frame;
 		origin = new Point();
 		center = _center;
 	}
-
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
@@ -303,11 +300,8 @@ class MouseEventListener implements MouseInputListener {
 		}
 		else if(e.getButton() == MouseEvent.BUTTON3)
 		{
-			//System.out.println("lll");
 			MyButton sourceBtn = (MyButton)e.getSource();
-			//System.out.println(sourceBtn);
             Center.KModel.config.deleteLayer(sourceBtn.layer);
-
 			boolean flag=true;
 			while(flag){
 				flag=false;
@@ -324,18 +318,13 @@ class MouseEventListener implements MouseInputListener {
 			for(ButtonAttribute bt:op){
 				bt.deleNext(sourceBtn);
 			}
-			center.SO.deleButton(sourceBtn.BtA);//???????
+			center.SO.deleButton(sourceBtn.BtA);
 			center.paintPanel.remove(sourceBtn);
-			//center.MyEditor.refresh();
-			//center.paintPanel.revalidate();
 			SwingUtilities.invokeLater(() -> {
 				center.paintPanel.repaint();
 			});
-			//center.updateUI();
 		}
 	}
-
-	//锟斤拷录锟斤拷臧达拷锟绞憋拷牡锟�
 
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -350,21 +339,15 @@ class MouseEventListener implements MouseInputListener {
 		});
 	}
 
-	//锟斤拷锟斤拷平锟斤拷锟斤拷锟斤拷锟绞憋拷锟斤拷锟斤拷锟斤拷锟斤拷图锟斤拷为锟狡讹拷图锟斤拷
-
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 	}
 
-	// 锟斤拷锟斤拷瞥锟斤拷锟斤拷锟斤拷锟绞憋拷锟斤拷锟斤拷锟斤拷锟斤拷图锟斤拷为默锟斤拷指锟斤拷
-
 	@Override
 	public void mouseExited(MouseEvent e) {
 		this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
-
-
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -372,8 +355,8 @@ class MouseEventListener implements MouseInputListener {
 		int x = p.x + (e.getX() - origin.x);
 		int y = p.y + (e.getY() - origin.y);
 		this.frame.setLocation(x, y);
-		this.frame.BtA.x = x;//???
-		this.frame.BtA.y= y;//???
+		this.frame.BtA.x = x;
+		this.frame.BtA.y= y;
 		if(center.paintPanel.maxY < y)
 		{
 			center.paintPanel.maxButton = this.frame;
