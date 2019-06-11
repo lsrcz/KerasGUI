@@ -167,13 +167,13 @@ Keras 内部可配置项。
 
 ## 项目可扩展性
 
-目前我们只实现了四种层：Dense(全连接层)，Conv1D(卷积层)，InputLayer(输入层)，Add(加层，多输入单输出)，但是我们的项目可以很容易地被扩展到更多种类的 Keras 层上，只需要：
+目前我们只实现了四种层：`Dense`(全连接层)，`Conv1D`(卷积层)，`InputLayer`(输入层)，`Add`(加层，多输入单输出)，但是我们的项目可以很容易地被扩展到更多种类的 Keras 层上，只需要：
 
-1. 创建一个类 SomeLayer 继承自 Layer 类。
-2. 创建另一个类 SomeLayerConfig 继承自 ConfigurableObject 类。
-3. 在 SomeLayer 里面提供正确注解的 class_name 和 config。
-4. 按照 Keras JSON 规范填写 SomeLayerConfig 类定义，只需要对每个域提供合适的注解。
-5. 在 LeftBar 中添加新的按钮。
+1. 创建一个类 `SomeLayer` 继承自 `Layer` 类。
+2. 创建另一个类 `SomeLayerConfig` 继承自 `ConfigurableObject` 类。
+3. 在 `SomeLayer` 里面提供正确注解的 `class_name` 和 `config`。
+4. 按照 Keras JSON 规范填写 `SomeLayerConfig` 类定义，只需要对每个域提供合适的注解。
+5. 在 `LeftBar` 中添加新的按钮。
 
 例：
 ```java
@@ -208,8 +208,8 @@ public class AddConfig extends ConfigurableObject {
 
 同时我们只实现了 Keras 的约束(constraint)，初始化器(initializer)和正则化器(regularizer)，如果需要增加其他的 Keras 可配置对象，只需要：
 
-1. 提供一个 BaseSomeObject 类，提供 `getSelections()` 和 `select(String)` 方法，`getSelections()` 返回所有选项的字符串形式，`select`根据字符串创建对象。
-2. 对于具体的 SomeObject，使之继承自 BaseSomeObject 类。
+1. 提供一个 `BaseSomeObject` 类继承自 `ConfigurableObject` 类，提供 `getSelections()` 和 `select(String)` 方法，`getSelections()` 返回所有选项的字符串形式，`select`根据字符串创建对象。
+2. 对于具体的 `SomeObject`，使之继承自 `BaseSomeObject` 类。
 
 例：
 
