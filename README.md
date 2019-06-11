@@ -269,7 +269,7 @@ public class L1L2Config extends ConfigurableObject {
 
 ## 项目管理
 
-项目采用 maven 管理，为标准 maven 项目，可以容易地用 maven 编译。
+项目采用 maven 管理，为标准 maven 项目，可以容易地用 maven 编译。程序入口为 io.github.lsrcz.kerasgui.gui.GUI。
 
 项目协作采用 git，项目地址 [https://github.com/lsrcz/KerasGUI](https://github.com/lsrcz/KerasGUI).
 
