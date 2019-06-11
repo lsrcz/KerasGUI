@@ -165,6 +165,110 @@ Keras 内部可配置项。
 
 保存了用来恢复现场的全部信息。
 
+## 项目可扩展性
+
+目前我们只实现了四种层：`Dense`(全连接层)，`Conv1D`(卷积层)，`InputLayer`(输入层)，`Add`(加层，多输入单输出)，但是我们的项目可以很容易地被扩展到更多种类的 Keras 层上，只需要：
+
+1. 创建一个类 `SomeLayer` 继承自 `Layer` 类。
+2. 创建另一个类 `SomeLayerConfig` 继承自 `ConfigurableObject` 类。
+3. 在 `SomeLayer` 里面提供正确注解的 `class_name` 和 `config`。
+4. 按照 Keras JSON 规范填写 `SomeLayerConfig` 类定义，只需要对每个域提供合适的注解。
+5. 在 `LeftBar` 中添加新的按钮。
+
+例：
+```java
+public class Add extends Layer {
+    @Expose
+    public final String class_name = "Add";
+
+    @ConfigProperty
+    @Expose
+    public AddConfig config;
+}
+
+
+public class AddConfig extends ConfigurableObject {
+    @LinkedProperty(name = "name")
+    @UniqueProperty(scope = "name", prefix = "add")
+    @ConfigProperty
+    @Expose
+    String name;
+
+    @ConfigProperty
+    @Expose
+    boolean trainable = true;
+
+    @ConfigProperty
+    @SelectStringProperty(selections = {"float32", "float16"})
+    @DefaultStringProperty(defaultString = "float32")
+    @Expose
+    String dtype;
+}
+```
+
+同时我们只实现了 Keras 的约束(constraint)，初始化器(initializer)和正则化器(regularizer)，如果需要增加其他的 Keras 可配置对象，只需要：
+
+1. 提供一个 `BaseSomeObject` 类继承自 `ConfigurableObject` 类，该类不应当有任何非静态域，提供 `String getSelections()` 和 `BaseSomeObject select(String)` 静态方法，`getSelections()` 返回所有选项的字符串形式，`select`根据字符串创建对象。
+2. 对于具体的 `SomeObject`，使之继承自 `BaseSomeObject` 类。
+
+例：
+
+```java
+
+public class BaseRegularizer extends ConfigurableObject {
+
+    public final static Map<String, Class<?>> map;
+
+    static {
+        map = new HashMap<>();
+        map.put("None", null);
+        map.put("L1L2", L1L2.class);
+    }
+
+    public static String[] getSelections() {
+        String[] ret = new String[map.size()];
+        map.keySet().toArray(ret);
+        return ret;
+    }
+
+    public static BaseRegularizer select(String str) {
+        if (map.containsKey(str)) {
+            Class<?> cls = map.get(str);
+            if (cls == null)
+                return null;
+            try {
+                return (BaseRegularizer) cls.newInstance();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                System.exit(-1);
+            }
+        }
+        return null;
+    }
+}
+
+
+public class L1L2 extends BaseRegularizer {
+    @Expose
+    public final String class_name = "L1L2";
+
+    @ConfigProperty
+    @Expose
+    L1L2Config config;
+}
+
+
+public class L1L2Config extends ConfigurableObject {
+    @ConfigProperty
+    @Expose
+    double l1 = 0.0;
+
+    @ConfigProperty
+    @Expose
+    double l2 = 0.0;
+}
+```
+
 ## 项目管理
 
 项目采用 maven 管理，为标准 maven 项目，可以容易地用 maven 编译。
