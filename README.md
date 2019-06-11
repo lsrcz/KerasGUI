@@ -120,3 +120,22 @@ Keras 内部可配置项。
 
 由于有一些属性的值在更新后会提供另外的一些选项，例如`kernal_initializer`属性在更新后，某些属性会消失，同时某些属性又会重新出现，因此`RightBar`提供了实时的更新功能；同时根据选项数量的多少及时调整是否显示滚动条。
 
+### 持久化
+
+#### `fileio.SaveObject`
+
+保存了用来恢复现场的全部信息。
+
+## 项目管理
+
+项目采用 maven 管理，为标准 maven 项目，可以容易地用 maven 编译。
+
+项目协作采用 git，项目地址 [https://github.com/lsrcz/KerasGUI](https://github.com/lsrcz/KerasGUI).
+
+## 分工（各自主要工作）
+
+- 卢思睿：Keras 数据结构，持久化（`layers` 包，`fileio` 包）。
+- 张航：GUI 中左侧和右侧，以及配置菜单（`gui.{Center, LeftBar, RightBar}`）。
+- 宁淳：Python 接口，持久化，图布局（`fileio` 包，`gui.Center`）。
+- 陈佳玉：图布局，持久化（`fileio` 包，`gui.Center`）。
+- 刘念奇：文本编辑器（`gui.Editor`）。
