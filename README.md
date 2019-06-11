@@ -120,6 +120,45 @@ Keras 内部可配置项。
 
 由于有一些属性的值在更新后会提供另外的一些选项，例如`kernal_initializer`属性在更新后，某些属性会消失，同时某些属性又会重新出现，因此`RightBar`提供了实时的更新功能；同时根据选项数量的多少及时调整是否显示滚动条。
 
+#### `Center.java`
+
+这个文件中包含`Center`类，`MyJPanel`类，`LineParameter`类，`MyActionListener`类，与`MouseEventListener`类。
+
+##### `Center`类
+
+这个类定义了GUI中间部分的布局，上半部分为功能区，设置了`Create`，`Add Line`，`Delete Line`三种可选功能；下半部分为操作区，供设计图结构。
+
+本类中还定义了`toCenter`，`getBack`功能， 分别用于从`LeftBar`处接受model对象，和根据`SaveObject`类对象恢复图结构。
+
+##### `MyJpanel`类
+
+这个类继承自JPanel类，实现画线操作，同时存储了可以添加的button的最大纵坐标的值，以方便加入滚动条至此面板。
+
+##### `LineParameter`类
+
+这个类存储了`Line`的参数，即起止的button。
+
+##### `MyActionListener`类
+
+这个类定义了功能区三个按钮分别对应的事件响应，即`Create`，`Add Line`，`Delete Line`三种可选功能。
+
+`Create`对应的事件为创建并显示一个button对象，将其与底层的layer关联，并将该layer加入网络结构中，同时对应save操作将其加入到SaveObject中。
+
+`Add Line`对应的事件为在用户指定的两个button间连线，因此需要用户在点击该按钮后，依次点击button A 和 button B, 需注意连线是有指向性的，即由 A 到 B。
+
+`Delete Line`对应的事件为删除用户指定的两个button之间的连线，操作方法同上。
+
+##### `MouseEventListener`类
+
+这个类中定义了一系列关于操作区中button对象的鼠标操作，主要包括点击左键，点击右键，以及鼠标拖动。
+
+点击左键会在`LeftBar`中显示该button对应的layer的信息。
+
+点击右键会删除button以及其相关联的line，并且将对应的底层的layer对象从网络结构和`SaveObject`对象中移除。
+
+鼠标拖动可以将button移动到操作区的任意位置，同时连线会根据新位置自动重绘。
+
+
 ### 持久化
 
 #### `fileio.SaveObject`

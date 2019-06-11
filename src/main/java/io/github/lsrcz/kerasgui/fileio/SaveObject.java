@@ -8,12 +8,20 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
+<<<<<<< HEAD
+ * This is a class for saving and loading
+ * It supplys operations to save and load the graph structure, innner model and related codes 
+ * @author Jiayu Chen, Sirui Lu
+ */
+
+=======
  * The save object for restore the project.
  *
  * @author Sirui Lu
  * @author Jiayu Chen
  * @author Chun Ning
  */
+>>>>>>> d6a8dbd5c469c5c5cd4a451688da96b4b09aac4e
 public class SaveObject implements Serializable {
     private Model model;
     private String editorContents;
