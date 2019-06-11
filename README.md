@@ -164,6 +164,8 @@ CallPython函数通过使用Runtime.getRuntime().exec()方法可以在java程序
 
 ## 项目可扩展性
 
+我们完全使用反射和注解实现了 layers 包，并从中获得了极高的可扩展性。
+
 目前我们只实现了四种层：`Dense`(全连接层)，`Conv1D`(卷积层)，`InputLayer`(输入层)，`Add`(加层，多输入单输出)，但是我们的项目可以很容易地被扩展到更多种类的 Keras 层上，只需要：
 
 1. 创建一个类 `SomeLayer` 继承自 `Layer` 类。
@@ -268,7 +270,7 @@ public class L1L2Config extends ConfigurableObject {
 
 ## 项目管理
 
-项目采用 maven 管理，为标准 maven 项目，可以容易地用 maven 编译。
+项目采用 maven 管理，为标准 maven 项目，可以容易地用 maven 编译。程序入口为 `io.github.lsrcz.kerasgui.gui.GUI`。
 
 项目协作采用 git，项目地址 [https://github.com/lsrcz/KerasGUI](https://github.com/lsrcz/KerasGUI).
 
