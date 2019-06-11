@@ -120,15 +120,15 @@ Keras 内部可配置项。
 
 由于有一些属性的值在更新后会提供另外的一些选项，例如`kernal_initializer`属性在更新后，某些属性会消失，同时某些属性又会重新出现，因此`RightBar`提供了实时的更新功能；同时根据选项数量的多少及时调整是否显示滚动条。
 
-#### `Center.java`
+#### `gui.Center.java`
 
 这个文件中包含`Center`类，`MyJPanel`类，`LineParameter`类，`MyActionListener`类，与`MouseEventListener`类。
 
-##### `Center`类
+##### `gui.Center`
 
 这个类定义了GUI中间部分的布局，上半部分为功能区，设置了`Create`，`Add Line`，`Delete Line`三种可选功能；下半部分为操作区，供设计图结构。
 
-本类中还定义了`toCenter`，`getBack`功能， 分别用于从`LeftBar`处接受model对象，和根据`SaveObject`类对象恢复图结构。
+本类中还定义了`toCenter`，`getBack`，`ModifyLine`功能， 分别用于从`LeftBar`处接受model对象，和根据`SaveObject`类对象恢复图结构，以及根据当前的eventNumber进行对应的修改线操作。
 
 ##### `MyJpanel`类
 
@@ -136,7 +136,7 @@ Keras 内部可配置项。
 
 ##### `LineParameter`类
 
-这个类存储了`Line`的参数，即起止的button。
+这个类存储了`Line`的参数，即起止的button，方便画线。
 
 ##### `MyActionListener`类
 
