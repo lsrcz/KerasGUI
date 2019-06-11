@@ -42,7 +42,53 @@ Keras 提供了方便的模型序列化与反序列化接口，支持将模型�
 
 我们允许将工程整个保存到硬盘，允许从硬盘中读取并恢复，该过程直接使用 Java 的序列化完成。
 
-## 代码实现
+## 代码实现 (包名均忽略前缀)
+
+### 模型表示
+
+#### UML 图（简化版）
+
+![](img/uml.png)
+
+#### `layers.annotation.*`
+
+提供了各种不同的注解来支持 Keras 的不同格式的选项。
+
+#### `layers.ConfigurableObject`
+
+这个文件为所有 Keras Object 的子类，它利用反射读取所有的域并进行相应初始化。并且提供了获取域信息的接口，均利用反射实现。
+
+#### `layers.ClassUtils`
+
+一些进行反射操作的实用函数。
+
+#### `layers.Pair`
+
+一个 Pair 类。
+
+#### `layers.UniqueNameGenerator`
+
+这个文件为 `UniqueProperty` 提供支持，提供了一个不重复的字符串名字生成器。
+
+#### `layers.layers.Layer`
+
+所有 Keras 层的公共基类，提供对 Keras JSON 内部链接格式的支持。
+
+#### `layers.layers.*`
+
+已经实现的层。
+
+#### `layers.model.Model`
+
+Keras 模型，提供序列化到 JSON 的接口。
+
+#### `layers.model.ModelConfig`
+
+Keras 模型配置，提供添加删除层，链接层的接口。
+
+#### `layers.constraint`, `layers.initializer`, `layers.regularizer`
+
+Keras 内部可配置项。
 
 ### GUI 部分
 
