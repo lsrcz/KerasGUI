@@ -8,6 +8,10 @@ import layers.layers.InputLayer;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *  This is the left bar of the GUI, providing selections for add layers into the network
+ * @author Hang Zhang
+ */
 public class LeftBar extends JPanel {
     LeftBar(RightBar rightBar, Center center) {
         setLayout(new FlowLayout());
@@ -16,7 +20,9 @@ public class LeftBar extends JPanel {
         dense.addActionListener((e) -> {
             Dense temp = new Dense();
             temp.init();
+            // Send new information of the new layer to the center part
             center.toCenter(temp);
+            // Show the information of the layer in the right bar part
             rightBar.refresh(temp);
         });
         JButton conv1d = new JButton("Conv1D");
