@@ -171,6 +171,8 @@ Keras 内部可配置项。
 
 项目协作采用 git，项目地址 [https://github.com/lsrcz/KerasGUI](https://github.com/lsrcz/KerasGUI).
 
+提供了良好的注释，对于主要代码均有完整的 Javadoc。
+
 ## 分工（各自主要工作）
 
 - 卢思睿：Keras 数据结构，持久化（`layers` 包，`fileio` 包）。
