@@ -58,10 +58,11 @@ public class Center extends JPanel {
 		setFocusable(true);
 		setVisible(true);
 	}
+
 	/**
 	 * This function is used for loading an archive file
-	 * @author Chun Ning, Jiayu Chen
-	 */
+     */
+
 	public void getBack()
 	{
 		ArrayList<ButtonAttribute> op = SO.getButton();
@@ -91,9 +92,12 @@ public class Center extends JPanel {
 		updateUI();
 
 	}
+
 	/**
-	 *  This is the function for Addline and DeleteLine
-	 * @author Chun Ning
+	 * This is the function for Addline and DeleteLine
+	 * @param btn1 start button
+	 * @param btn2	end button
+	 * @param eventNumber choose add or delete
 	 */
 	public void ModifyLine(MyButton btn1,MyButton btn2,int eventNumber) {
 		if(eventNumber==Time2AddLine)
@@ -114,6 +118,12 @@ public class Center extends JPanel {
 			});
 		}
 	}
+
+	/**
+	 * delete line and also delete edge in model
+	 * @param btn1 start button
+	 * @param btn2 end button
+	 */
 	public void deleteLine(MyButton btn1,MyButton btn2){
 		KModel.config.deleteEdge(btn1.layer,btn2.layer);
 		int index=0;
@@ -148,6 +158,11 @@ class MyJPanel extends JPanel{
 		super();
 		maxY = 0;
 	}
+
+	/**
+	 * override function paint to make the line permanent display
+	 * @param g
+	 */
 	public void paint(Graphics g) {
 		super.paint(g);
 		int i=0;
@@ -160,6 +175,15 @@ class MyJPanel extends JPanel{
 			drawLine(g,btn1_x,btn1_y,btn2_x,btn2_y);
 		}
 	}
+
+	/**
+	 * draw three broken lines
+	 * @param g
+	 * @param x1 start point x
+	 * @param y1 start point y
+	 * @param x2 end point x
+	 * @param y2 end point y
+	 */
 	public void drawLine(Graphics g,int x1,int y1,int x2,int y2){
 		int mid_y;
 		boolean flag=true;
@@ -214,6 +238,10 @@ class MyActionListener implements ActionListener {
 		center = _center;
 	}
 
+	/**
+	 * Response to all button events
+	 * @param e to know which button you choose
+	 */
 	public void actionPerformed(ActionEvent e) {
 		Object button = e.getSource();
 		if (button == center.button1) {
@@ -291,6 +319,10 @@ class MouseEventListener implements MouseInputListener {
 	}
 	
 	@Override
+	/**
+	 * Left-click for displaying the information and Right-click for deleting the button
+	 * @param e get Left-click and Right-click
+	 */
 	public void mouseClicked(MouseEvent e) {
 
 		if(e.getButton() == MouseEvent.BUTTON1)
@@ -350,6 +382,10 @@ class MouseEventListener implements MouseInputListener {
 	}
 
 	@Override
+	/**
+	 * drag the button
+	 * @param e get location
+	 */
 	public void mouseDragged(MouseEvent e) {
 		Point p = this.frame.getLocation();
 		int x = p.x + (e.getX() - origin.x);
